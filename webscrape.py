@@ -61,10 +61,11 @@ class NBAGame:
         print('\n'.join("%s: %s" % item for item in attrs.items()))
 
     def export_data(self):
-        game_data_array = []
-        omit_stat_indexes = [10, 13, 16, 20]
+        game_data_array = []  # stores game statistics --> will be a row in the machine learning training file
+        omit_stat_indexes = [10, 13, 16, 20]  # indexes of statistics to omit (FGM, FTM, 3PM, REB)
         stats_per_player = 16
 
+        # loops through all players on the home team and adds relevant data to array
         for i in range(len(self.home_team_players)):
             for x in range(8, len(self.home_team_players[i])):
                 if x in omit_stat_indexes:
@@ -74,11 +75,13 @@ class NBAGame:
                     stat = 0
                 game_data_array.append(stat)
 
+        # fills in 0s if less than 13 players
         if len(self.home_team_players) < 13:
             missing_players = 13 - len(self.home_team_players)
             for i in range(missing_players * stats_per_player):
                 game_data_array.append(0)
 
+        # loops through all players on the away team and adds relevant data to array
         for i in range(len(self.away_team_players)):
             for x in range(8, len(self.away_team_players[i])):
                 if x in omit_stat_indexes:
@@ -88,12 +91,13 @@ class NBAGame:
                     stat = 0
                 game_data_array.append(stat)
 
+        # fills in 0s if less than 13 players
         if len(self.away_team_players) < 13:
             missing_players = 13 - len(self.away_team_players)
             for i in range(missing_players * stats_per_player):
                 game_data_array.append(0)
 
-        game_data_array.append(int(self.home_win))
+        game_data_array.append(int(self.home_win))  # adds win result to array
         return game_data_array
 
 
