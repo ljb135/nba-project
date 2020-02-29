@@ -99,11 +99,13 @@ def get_game_ids(json_file):
 
 games = games_on_date("11", "19", "2019")
 game_id_list = get_game_ids(games)
+
 for i in range(len(game_id_list)):
     curr_game_id = game_id_list[i]
     game_info = NBAGame(curr_game_id, games)
     game_data_array = []
     omit_stat_indexes = [10, 13, 16, 20]
+    stats_per_player = 16
     for i in range(len(game_info.home_team_players)):
         for x in range(8, len(game_info.home_team_players[i])):
             if x in omit_stat_indexes:
@@ -112,6 +114,10 @@ for i in range(len(game_id_list)):
             if stat is None:
                 stat = 0
             game_data_array.append(stat)
+    if len(game_info.home_team_players) < 13:
+        missing_players = 13 - len(game_info.home_team_players)
+        for i in range (missing_players*stats_per_player):
+            game_data_array.append(0)
     for i in range(len(game_info.away_team_players)):
         for x in range(8, len(game_info.away_team_players[i])):
             if x in omit_stat_indexes:
@@ -120,6 +126,10 @@ for i in range(len(game_id_list)):
             if stat is None:
                 stat = 0
             game_data_array.append(stat)
+    if len(game_info.away_team_players) < 13:
+        missing_players = 13 - len(game_info.away_team_players)
+        for i in range (missing_players*stats_per_player):
+            game_data_array.append(0)
 
 game_data_array.append(int(game_info.home_win))
 
