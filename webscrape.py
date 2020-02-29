@@ -7,6 +7,7 @@ class NBAGame:
     def __init__(self, game_id, json_file):
         self.game_id = game_id
         self.json_file = json_file
+
         self.home_team_id = None
         self.away_team_id = None
         self.home_team_points = None
@@ -20,6 +21,7 @@ class NBAGame:
         self.__set_player_stats()
         self.__set_result()
 
+    # can you please make the methods in this class more readable/add comments?
     def __set_team_ids(self):
         for i in range(len(self.json_file["resultSets"][2]["rowSet"])):
             if self.json_file["resultSets"][2]["rowSet"][i][0] == self.game_id:
@@ -89,8 +91,38 @@ def get_game_ids(json_file):
 
 
 games = games_on_date("11", "01", "2019")
-NBAGame(game_id=get_game_ids(games)[0], json_file=games).print()
+game_id_list = get_game_ids(games)
+curr_game_id = game_id_list[0]
+game_info = NBAGame(curr_game_id, games)
+game_data_array = []
+omit_stat_indexes = [10, 13, 16, 20]
+for i in range(len(game_info.home_team_players)):
+    for x in range(8, len(game_info.home_team_players[i])):
+        if x in omit_stat_indexes:
+            continue
+        stat = game_info.home_team_players[i][x]
+        if stat is None:
+            stat = 0
+        game_data_array.append(stat)
+for i in range(len(game_info.away_team_players)):
+    for x in range(8, len(game_info.away_team_players[i])):
+        if x in omit_stat_indexes:
+            continue
+        stat = game_info.away_team_players[i][x]
+        if stat is None:
+            stat = 0
+        game_data_array.append(stat)
 
+game_data_array.append(game_info.home_win)
+
+print(len(game_data_array))
+print(game_data_array)
+
+# print(game_info.away_team_players[i])
+
+# print(json.dumps(games, indent=4))
+# print(json.dumps(game_info.home_team_players, indent=4))
+#
 # for game_id in get_game_ids(games):
 #     stats = stats_in_game(game_id)
 #     print(json.dumps(stats, indent=4))
