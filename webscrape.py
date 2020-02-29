@@ -3,6 +3,25 @@ import gzip
 import json
 
 
+class game:
+    gameid = None
+    hometeam_id = None
+    awayteam_id = None
+    hometeam_points = None
+    awayteam_points = None
+    hometeam_players = None
+    awayteam_players = None
+    result = None
+
+    def __init__(self, gameid, hometeam_id, awayteam_id):
+        self.gameid = gameid
+        self.hometeam_id = hometeam_id
+        self.awayteam_id = awayteam_id
+
+    def get_points(self):
+
+
+
 def games_on_date(month, day, year):
     day = f"{month}%2F{day}%2F{year}"
     gameid_url = f"https://stats.nba.com/stats/scoreboardV2?DayOffset=0&LeagueID=00&gameDate={day}"
@@ -36,8 +55,10 @@ def get_game_ids(json_file):
     return game_ids
 
 
-for game_id in get_game_ids(games_on_date("11", "01", "2001")):
-    print(stats_in_game(game_id))
-# print(json.dumps(games_on_date("12", "07", "2002"), indent=4))
-# print(json.dumps(stats_in_game("0020200282"), indent=4))
+# games = games_on_date("11", "01", "2001")
+# for game_id in get_game_ids(games):
+#     stats = stats_in_game(game_id)
+#     print(json.dumps(stats, indent=4))
 
+# print(json.dumps(games_on_date("11", "01", "2001"), indent=4))
+print(json.dumps(stats_in_game("0020100019"), indent=4))
