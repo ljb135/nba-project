@@ -131,7 +131,7 @@ for i in range(len(game_id_list)):
         for i in range (missing_players*stats_per_player):
             game_data_array.append(0)
 
-game_data_array.append(int(game_info.home_win))
+    game_data_array.append(int(game_info.home_win))
 
     print(len(game_data_array))
     print(game_data_array)
