@@ -1,7 +1,8 @@
 import urllib.request
 import gzip
 import json
-from numpy import *
+import numpy as np
+from pandas import *
 
 
 class NBAGame:
@@ -149,8 +150,9 @@ for game_id in game_id_list:
     game_data = target_game.export_data()
     data_array.append(game_data)
 
-data_matrix = reshape(data_array, (len(data_array), len(game_data)))
-print(data_matrix)
+# data_matrix = reshape(data_array, (len(data_array), len(game_data)))
+# print(data_matrix)
+print(DataFrame(data_array))
 
 # print(game_info.away_team_players[i])
 
