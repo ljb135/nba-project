@@ -150,7 +150,6 @@ def get_game_ids(json_file):
 
 # converts data into a csv file
 def export_data(game_day_matrix):
-    filename = "original_training_data.csv"
     with open(filename, 'a', newline='') as csv_file:
 
         # creating a csv writer object
@@ -158,6 +157,16 @@ def export_data(game_day_matrix):
 
         # writing the data rows
         csv_writer.writerows(game_day_matrix)
+
+
+# normalizes data in csv file
+def normalize_data():
+    data_matrix = []
+    with open(filename) as csv_file:
+        csv_reader = csv.reader(csv_file)
+        for row in csv_reader:
+            data_matrix.append(row)
+    return data_matrix
 
 
 def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_year):
@@ -181,7 +190,6 @@ def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_yea
                     game_id_list = get_game_ids(games)
 
                     game_day_matrix = []
-                    game_data = []
 
                     for game_id in game_id_list:
                         target_game = NBAGame(game_id, games)
@@ -189,22 +197,14 @@ def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_yea
                         game_day_matrix.append(game_data)
 
                     print(str(month).zfill(2), str(day).zfill(2), year)
+                    print(len(game_id_list), "games added.")
 
                     export_data(game_day_matrix)
                 except:
                     continue
 
 
-export_range(1, 1, 2020, 1, 3, 2020)
-
-# print(game_info.away_team_players[i])
-
-# print(json.dumps(games, indent=4))
-# print(json.dumps(game_info.home_team_players, indent=4))
-#
-# for game_id in get_game_ids(games):
-#     stats = stats_in_game(game_id)
-#     print(json.dumps(stats, indent=4))
-
-# print(json.dumps(games_on_date("11", "01", "2001"), indent=4))
-# print(json.dumps(stats_in_game("0020100019"), indent=4))
+filename = "original_training_data.csv"
+export_range(1, 2, 2020, 1, 4, 2020)
+orig_csv_data = normalize_data()
+print(DataFrame(orig_csv_data))
