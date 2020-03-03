@@ -151,7 +151,7 @@ def get_game_ids(json_file):
 # converts data into a csv file
 def export_data(game_day_matrix):
     filename = "original_training_data.csv"
-    with open(filename, 'w') as csv_file:
+    with open(filename, 'a', newline='') as csv_file:
 
         # creating a csv writer object
         csv_writer = csv.writer(csv_file)
@@ -160,7 +160,7 @@ def export_data(game_day_matrix):
         csv_writer.writerows(game_day_matrix)
 
 
-games = games_on_date("12", "07", "2019")
+games = games_on_date("12", "09", "2019")
 game_id_list = get_game_ids(games)
 
 gameday_matrix = []
