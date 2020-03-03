@@ -160,22 +160,42 @@ def export_data(game_day_matrix):
         csv_writer.writerows(game_day_matrix)
 
 
-games = games_on_date("12", "09", "2019")
-game_id_list = get_game_ids(games)
+def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_year):
+    for year in range(begin_year, end_year+1):
+        s_month = 1
+        e_month = 12
+        if year == begin_year:
+            s_month = begin_month
+        if year == end_year:
+            e_month = end_month
+        for month in range(s_month, e_month+1):
+            s_day = 1
+            e_day = 31
+            if month == begin_month and year == begin_year:
+                s_day = begin_day
+            if month == end_month and year == end_year:
+                e_day = end_day
+            for day in range(s_day, e_day+1):
+                try:
+                    games = games_on_date(str(month).zfill(2), str(day).zfill(2), year)
+                    game_id_list = get_game_ids(games)
 
-gameday_matrix = []
-game_data = []
+                    game_day_matrix = []
+                    game_data = []
 
-for game_id in game_id_list:
-    target_game = NBAGame(game_id, games)
-    game_data = target_game.compile_data()
-    gameday_matrix.append(game_data)
+                    for game_id in game_id_list:
+                        target_game = NBAGame(game_id, games)
+                        game_data = target_game.compile_data()
+                        game_day_matrix.append(game_data)
 
-# data_matrix = reshape(data_array, (len(data_array), len(game_data)))
-# print(data_matrix)
-print(DataFrame(gameday_matrix))
+                    print(str(month).zfill(2), str(day).zfill(2), year)
 
-export_data(gameday_matrix)
+                    export_data(game_day_matrix)
+                except:
+                    continue
+
+
+export_range(1, 1, 2020, 1, 3, 2020)
 
 # print(game_info.away_team_players[i])
 
