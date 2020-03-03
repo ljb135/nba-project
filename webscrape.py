@@ -3,6 +3,7 @@ import gzip
 import json
 import numpy as np
 from pandas import *
+import csv
 
 
 class NBAGame:
@@ -62,7 +63,7 @@ class NBAGame:
         attrs = vars(self)
         print('\n'.join("%s: %s" % item for item in attrs.items()))
 
-    def export_data(self):
+    def compile_data(self):
         game_data_array = []  # stores game statistics --> will be a row in the machine learning training file
         omit_stat_indexes = [10, 13, 16, 20]  # indexes of statistics to omit (FGM, FTM, 3PM, REB)
         stats_per_player = 16
@@ -139,20 +140,34 @@ def get_game_ids(json_file):
     return game_ids
 
 
-games = games_on_date("12", "19", "2019")
+def export_data(gameday_matrix):
+    filename = "original_training_data.csv"
+    with open(filename, 'w') as csvfile:
+
+        # creating a csv writer object
+        csvwriter = csv.writer(csvfile)
+
+        # writing the data rows
+        csvwriter.writerows(gameday_matrix)
+
+
+
+games = games_on_date("12", "07", "2019")
 game_id_list = get_game_ids(games)
 
-data_array = []
+gameday_matrix = []
 game_data = []
 
 for game_id in game_id_list:
     target_game = NBAGame(game_id, games)
-    game_data = target_game.export_data()
-    data_array.append(game_data)
+    game_data = target_game.compile_data()
+    gameday_matrix.append(game_data)
 
 # data_matrix = reshape(data_array, (len(data_array), len(game_data)))
 # print(data_matrix)
-print(DataFrame(data_array))
+print(DataFrame(gameday_matrix))
+
+export_data(gameday_matrix)
 
 # print(game_info.away_team_players[i])
 
