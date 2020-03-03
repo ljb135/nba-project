@@ -64,6 +64,7 @@ class NBAGame:
         attrs = vars(self)
         print('\n'.join("%s: %s" % item for item in attrs.items()))
 
+    # inserts all data into a one-dimension array
     def compile_data(self):
         game_data_array = []  # stores game statistics --> will be a row in the machine learning training file
         omit_stat_indexes = [10, 13, 16, 20]  # indexes of statistics to omit (FGM, FTM, 3PM, REB)
@@ -96,6 +97,9 @@ class NBAGame:
                 stat = self.away_team_players[i][x]
                 if stat is None:
                     stat = 0
+                elif x == 8:  # modify timestamp into seconds
+                    timestamp = re.match(r"(\d+):(\d+)", stat).groups()
+                    stat = int(timestamp[0])*60 + int(timestamp[1])
                 game_data_array.append(stat)
 
         # fills in 0s if less than 13 players
@@ -144,6 +148,7 @@ def get_game_ids(json_file):
     return game_ids
 
 
+# converts data into a csv file
 def export_data(game_day_matrix):
     filename = "original_training_data.csv"
     with open(filename, 'w') as csv_file:
