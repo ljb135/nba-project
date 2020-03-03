@@ -4,6 +4,7 @@ import json
 import numpy as np
 from pandas import *
 import csv
+import re
 
 
 class NBAGame:
@@ -76,6 +77,9 @@ class NBAGame:
                 stat = self.home_team_players[i][x]
                 if stat is None:
                     stat = 0
+                elif x == 8:  # modify timestamp into seconds
+                    timestamp = re.match(r"(\d+):(\d+)", stat).groups()
+                    stat = int(timestamp[0])*60 + int(timestamp[1])
                 game_data_array.append(stat)
 
         # fills in 0s if less than 13 players
@@ -140,16 +144,15 @@ def get_game_ids(json_file):
     return game_ids
 
 
-def export_data(gameday_matrix):
+def export_data(game_day_matrix):
     filename = "original_training_data.csv"
-    with open(filename, 'w') as csvfile:
+    with open(filename, 'w') as csv_file:
 
         # creating a csv writer object
-        csvwriter = csv.writer(csvfile)
+        csv_writer = csv.writer(csv_file)
 
         # writing the data rows
-        csvwriter.writerows(gameday_matrix)
-
+        csv_writer.writerows(game_day_matrix)
 
 
 games = games_on_date("12", "07", "2019")
