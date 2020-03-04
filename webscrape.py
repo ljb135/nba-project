@@ -149,18 +149,14 @@ def get_game_ids(json_file):
 
 
 # converts data into a csv file
-def export_data(game_day_matrix):
+def export_data(game_day_matrix, filename):
     with open(filename, 'a', newline='') as csv_file:
-
-        # creating a csv writer object
-        csv_writer = csv.writer(csv_file)
-
-        # writing the data rows
-        csv_writer.writerows(game_day_matrix)
+        csv_writer = csv.writer(csv_file) # creating a csv writer object
+        csv_writer.writerows(game_day_matrix) # writing the data rows
 
 
-# normalizes data in csv file
-def normalize_data():
+# reads data from csv file
+def read_csv_file(filename):
     data_matrix = []
     with open(filename) as csv_file:
         csv_reader = csv.reader(csv_file)
@@ -169,7 +165,13 @@ def normalize_data():
     return data_matrix
 
 
-def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_year):
+# normalize data
+def normalize_data(orig_data, filename):
+    for column in orig_data:
+        for row in orig_data:
+
+
+def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_year, filename):
     for year in range(begin_year, end_year+1):
         s_month = 1
         e_month = 12
@@ -199,12 +201,13 @@ def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_yea
                     print(str(month).zfill(2), str(day).zfill(2), year)
                     print(len(game_id_list), "games added.")
 
-                    export_data(game_day_matrix)
+                    export_data(game_day_matrix, filename)
                 except:
                     continue
 
 
-filename = "original_training_data.csv"
-export_range(1, 2, 2020, 1, 4, 2020)
-orig_csv_data = normalize_data()
+orig_csv_filename = "original_training_data.csv"
+normalize_csv_filename = "normalized_training_data.csv"
+export_range(1, 2, 2020, 1, 4, 2020, orig_csv_filename)
+orig_csv_data = read_csv_file(orig_csv_filename)
 print(DataFrame(orig_csv_data))
