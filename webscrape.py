@@ -1,8 +1,7 @@
 import urllib.request
+from urllib.error import HTTPError
 import gzip
 import json
-import numpy as np
-from pandas import *
 import csv
 import re
 
@@ -69,6 +68,8 @@ class NBAGame:
         game_data_array = []  # stores game statistics --> will be a row in the machine learning training file
         omit_stat_indexes = [10, 13, 16, 20]  # indexes of statistics to omit (FGM, FTM, 3PM, REB)
         stats_per_player = 16
+
+        game_data_array.append(int(self.game_id))
 
         # loops through all players on the home team and adds relevant data to array
         for i in range(len(self.home_team_players)):
@@ -151,24 +152,8 @@ def get_game_ids(json_file):
 # converts data into a csv file
 def export_data(game_day_matrix, filename):
     with open(filename, 'a', newline='') as csv_file:
-        csv_writer = csv.writer(csv_file) # creating a csv writer object
-        csv_writer.writerows(game_day_matrix) # writing the data rows
-
-
-# reads data from csv file
-def read_csv_file(filename):
-    data_matrix = []
-    with open(filename) as csv_file:
-        csv_reader = csv.reader(csv_file)
-        for row in csv_reader:
-            data_matrix.append(row)
-    return data_matrix
-
-
-# normalize data
-def normalize_data(orig_data, filename):
-    for column in orig_data:
-        for row in orig_data:
+        csv_writer = csv.writer(csv_file)  # creating a csv writer object
+        csv_writer.writerows(game_day_matrix)  # writing the data rows
 
 
 def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_year, filename):
@@ -182,6 +167,8 @@ def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_yea
         for month in range(s_month, e_month+1):
             s_day = 1
             e_day = 31
+            if month in range(5, 10):
+                continue
             if month == begin_month and year == begin_year:
                 s_day = begin_day
             if month == end_month and year == end_year:
@@ -202,12 +189,13 @@ def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_yea
                     print(len(game_id_list), "games added.")
 
                     export_data(game_day_matrix, filename)
-                except:
-                    continue
+                except HTTPError as ex:
+                    if ex.code == 400:
+                        break
+                    else:
+                        raise
 
 
-orig_csv_filename = "original_training_data.csv"
-normalize_csv_filename = "normalized_training_data.csv"
-export_range(1, 2, 2020, 1, 4, 2020, orig_csv_filename)
-orig_csv_data = read_csv_file(orig_csv_filename)
-print(DataFrame(orig_csv_data))
+csv_filename = "training_data.csv"
+export_range(2, 16, 2020, 2, 16, 2020, csv_filename)
+# export_range(10, 27, 2015, 4, 10, 2019, csv_filename)
