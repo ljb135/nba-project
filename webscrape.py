@@ -177,18 +177,19 @@ def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_yea
                 try:
                     games = games_on_date(str(month).zfill(2), str(day).zfill(2), year)
                     game_id_list = get_game_ids(games)
-
                     game_day_matrix = []
+                    games_skipped = 0
 
                     for game_id in game_id_list:
-                        if str(game_id)[0] is not 2:
+                        if str(game_id)[2] is not "2":
+                            games_skipped += 1
                             continue
                         target_game = NBAGame(game_id, games)
                         game_data = target_game.compile_data()
                         game_day_matrix.append(game_data)
 
                     print(str(month).zfill(2), str(day).zfill(2), year)
-                    print(len(game_id_list), "games added.")
+                    print(len(game_id_list) - games_skipped, "games added.")
 
                     export_data(game_day_matrix, filename)
                 except HTTPError as ex:
