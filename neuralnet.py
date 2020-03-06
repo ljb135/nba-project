@@ -23,7 +23,7 @@ model.add(Dense(1, activation='sigmoid'))
 
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-model.fit(X, y, epochs=150, batch_size=10)
+model.fit(X, y, epochs=400, batch_size=10)
 
 X = test_dataset[:, 1:417]
 y = test_dataset[:, 417]
