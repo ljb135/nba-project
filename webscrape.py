@@ -200,5 +200,5 @@ def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_yea
 
 
 csv_filename = "training_data.csv"
-export_range(2, 16, 2020, 2, 16, 2020, csv_filename)
+export_range(2, 26, 2020, 3, 10, 2020, csv_filename)
 # export_range(10, 27, 2015, 4, 10, 2019, csv_filename)
