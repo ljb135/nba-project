@@ -181,6 +181,8 @@ def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_yea
                     game_day_matrix = []
 
                     for game_id in game_id_list:
+                        if str(game_id)[0] is not 2:
+                            continue
                         target_game = NBAGame(game_id, games)
                         game_data = target_game.compile_data()
                         game_day_matrix.append(game_data)
