@@ -32,7 +32,7 @@ def test(model, test_csv_filename):
 
 
 neural_net = train("18-19_data.csv")
-test(neural_net, "testing_data.csv")
+test(neural_net, "17-18_data.csv")
 
 # print(model.predict(x))
 # weights = model.get_weights()

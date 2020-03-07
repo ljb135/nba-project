@@ -203,6 +203,6 @@ def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_yea
                         raise
 
 
-csv_filename = "training_data.csv"
-export_range(3, 17, 2019, 5, 1, 2019, csv_filename)
+csv_filename = "17-18_data.csv"
+export_range(11, 25, 2017, 5, 1, 2018, csv_filename)
 # export_range(10, 27, 2015, 4, 10, 2019, csv_filename)
