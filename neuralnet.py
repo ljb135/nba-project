@@ -2,8 +2,6 @@ from numpy import *
 from pandas import *
 from keras.models import Sequential
 from keras.layers import Dense
-from tensorflow.python.client import device_lib
-import csv
 
 
 def train(train_csv_filename):
@@ -33,7 +31,7 @@ def test(model, test_csv_filename):
     print(model.evaluate(x, y))
 
 
-neural_net = train("18-19_training_data.csv")
+neural_net = train("18-19_data.csv")
 test(neural_net, "testing_data.csv")
 
 # print(model.predict(x))
