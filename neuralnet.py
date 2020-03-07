@@ -6,31 +6,40 @@ from tensorflow.python.client import device_lib
 import csv
 
 
-train_csv_filename = "training_data.csv"
-test_csv_filename = "testing_data.csv"
+def train(train_csv_filename):
+    train_dataset = loadtxt(train_csv_filename, delimiter=',')  # load the dataset
 
-train_dataset = loadtxt(train_csv_filename, delimiter=',')  # load the dataset
-test_dataset = loadtxt(test_csv_filename, delimiter=',')
+    # split into input (X) and output (Y) variables
+    X = train_dataset[:, 1:417]
+    Y = train_dataset[:, 417]
 
-# split into input (X) and output (Y) variables
-X = train_dataset[:, 1:417]
-Y = train_dataset[:, 417]
+    model = Sequential()
+    model.add(Dense(12, input_dim=416, activation='relu'))
+    model.add(Dense(8, activation='relu'))
+    model.add(Dense(1, activation='sigmoid'))
 
-x = test_dataset[:, 1:417]
-y = test_dataset[:, 417]
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-model = Sequential()
-model.add(Dense(200, input_dim=416, activation='relu'))
-# model.add(Dense(8, activation='relu'))
-model.add(Dense(1, activation='sigmoid'))
+    model.fit(X, Y, epochs=400, batch_size=10)
+    return model
 
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-model.fit(X, Y, epochs=75, batch_size=50)
+def test(model, test_csv_filename):
+    test_dataset = loadtxt(test_csv_filename, delimiter=',')
+
+    x = test_dataset[:, 1:417]
+    y = test_dataset[:, 417]
+
+    print(model.evaluate(x, y))
+
+
+neural_net = train("18-19_training_data.csv")
+test(neural_net, "testing_data.csv")
+
 # print(model.predict(x))
-weights = model.get_weights()
-print(weights)
-# print(model.evaluate(x, y))
+# weights = model.get_weights()
+# print(weights)
+
 
 
 # _, accuracy = model.evaluate(x, y)
