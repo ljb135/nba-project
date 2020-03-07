@@ -73,6 +73,8 @@ class NBAGame:
 
         # loops through all players on the home team and adds relevant data to array
         for i in range(len(self.home_team_players)):
+            if i > 12:
+                break
             for x in range(8, len(self.home_team_players[i])):
                 if x in omit_stat_indexes:
                     continue
@@ -92,6 +94,8 @@ class NBAGame:
 
         # loops through all players on the away team and adds relevant data to array
         for i in range(len(self.away_team_players)):
+            if i > 12:
+                break
             for x in range(8, len(self.away_team_players[i])):
                 if x in omit_stat_indexes:
                     continue
