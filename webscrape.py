@@ -1,5 +1,6 @@
 import urllib.request
 from urllib.error import HTTPError
+import datetime
 import gzip
 import json
 import csv
@@ -192,8 +193,10 @@ def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_yea
                         game_data = target_game.compile_data()
                         game_day_matrix.append(game_data)
 
-                    print(str(month).zfill(2), str(day).zfill(2), year)
-                    print(len(game_id_list) - games_skipped, "games added.")
+                    time = datetime.datetime.now().strftime("%I:%M:%S %p")
+                    games_added = len(game_id_list) - games_skipped
+
+                    print(str(month).zfill(2), str(day).zfill(2), year, f": {games_added} games added\t({time})")
 
                     export_data(game_day_matrix, filename)
                 except HTTPError as ex:
@@ -203,6 +206,6 @@ def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_yea
                         raise
 
 
-csv_filename = "17-18_data.csv"
-export_range(11, 25, 2017, 5, 1, 2018, csv_filename)
+csv_filename = "19-20_data.csv"
+export_range(1, 20, 2020, 3, 7, 2020, csv_filename)
 # export_range(10, 27, 2015, 4, 10, 2019, csv_filename)

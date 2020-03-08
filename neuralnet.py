@@ -18,7 +18,7 @@ def train(train_csv_filename):
 
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    model.fit(X, Y, epochs=400, batch_size=10)
+    model.fit(X, Y, epochs=300, batch_size=10)
     return model
 
 
@@ -31,8 +31,8 @@ def test(model, test_csv_filename):
     print(model.evaluate(x, y))
 
 
-neural_net = train("18-19_data.csv")
-test(neural_net, "17-18_data.csv")
+neural_net = train("training_data.csv")
+test(neural_net, "19-20_data.csv")
 
 # print(model.predict(x))
 # weights = model.get_weights()
