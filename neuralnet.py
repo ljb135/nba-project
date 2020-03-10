@@ -1,7 +1,9 @@
 from numpy import *
 from pandas import *
 from keras.models import Sequential
+from keras.models import load_model
 from keras.layers import Dense
+
 
 
 def train(train_csv_filename):
@@ -18,7 +20,7 @@ def train(train_csv_filename):
 
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    model.fit(X, Y, epochs=300, batch_size=10)
+    model.fit(X, Y, epochs=300, batch_size=32)
     return model
 
 
@@ -33,6 +35,7 @@ def test(model, test_csv_filename):
 
 neural_net = train("training_data.csv")
 test(neural_net, "19-20_data.csv")
+neural_net.save_weights("model_weights.h5")
 
 # print(model.predict(x))
 # weights = model.get_weights()
