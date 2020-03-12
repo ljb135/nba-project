@@ -5,16 +5,25 @@ from keras.models import load_model
 from keras.layers import Dense
 
 
+def read_data(train_csv_filename):
+    data = loadtxt(train_csv_filename, delimiter=',')
+    d_list = []
+    for i in range(1, 27):
+        d_list.append(i * 16 - 1)
+        d_list.append(i * 16)
+    data = delete(data, d_list, 1)
+    return data
 
-def train(train_csv_filename):
-    train_dataset = loadtxt(train_csv_filename, delimiter=',')  # load the dataset
+
+def train(train_csv_filename, excluded):
+    train_dataset = read_data(train_csv_filename)
 
     # split into input (X) and output (Y) variables
-    X = train_dataset[:, 1:417]
-    Y = train_dataset[:, 417]
+    X = train_dataset[:, 1:417 - (26*excluded)]
+    Y = train_dataset[:, 417 - (26*excluded)]
 
     model = Sequential()
-    model.add(Dense(12, input_dim=416, activation='relu'))
+    model.add(Dense(16, input_dim=416 - (26*excluded), activation='relu'))
     model.add(Dense(8, activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
 
@@ -24,17 +33,19 @@ def train(train_csv_filename):
     return model
 
 
-def test(model, test_csv_filename):
-    test_dataset = loadtxt(test_csv_filename, delimiter=',')
+def test(model, test_csv_filename, excluded):
+    test_dataset = read_data(test_csv_filename)
 
-    x = test_dataset[:, 1:417]
-    y = test_dataset[:, 417]
+    x = test_dataset[:, 1:417 - (26*excluded)]
+    y = test_dataset[:, 417 - (26*excluded)]
 
     print(model.evaluate(x, y))
 
 
-neural_net = train("training_data.csv")
-test(neural_net, "19-20_data.csv")
+# print(read_data("training_data.csv")[0])
+
+neural_net = train("training_data.csv", 2)
+test(neural_net, "19-20_data.csv", 2)
 neural_net.save_weights("model_weights.h5")
 
 # print(model.predict(x))
