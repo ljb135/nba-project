@@ -16,7 +16,7 @@ def read_data(train_csv_filename):
 
 
 def train(train_csv_filename, excluded):
-    train_dataset = read_data(train_csv_filename)
+    train_dataset = loadtxt(train_csv_filename, delimiter=',')
 
     # split into input (X) and output (Y) variables
     X = train_dataset[:, 1:417 - (26*excluded)]
@@ -29,12 +29,12 @@ def train(train_csv_filename, excluded):
 
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    model.fit(X, Y, epochs=300, batch_size=32)
+    model.fit(X, Y, epochs=150, batch_size=32)
     return model
 
 
 def test(model, test_csv_filename, excluded):
-    test_dataset = read_data(test_csv_filename)
+    test_dataset = loadtxt(test_csv_filename, delimiter=',')
 
     x = test_dataset[:, 1:417 - (26*excluded)]
     y = test_dataset[:, 417 - (26*excluded)]
@@ -44,8 +44,8 @@ def test(model, test_csv_filename, excluded):
 
 # print(read_data("training_data.csv")[0])
 
-neural_net = train("training_data.csv", 2)
-test(neural_net, "19-20_data.csv", 2)
+neural_net = train("training_data.csv", 0)
+test(neural_net, "testing_data.csv", 0)
 neural_net.save_weights("model_weights.h5")
 
 # print(model.predict(x))
