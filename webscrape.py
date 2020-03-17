@@ -156,7 +156,10 @@ def stats_in_game(game_id):
 
 
 def get_seasonal_stats(season):
-    season_stats_url = f"https://stats.nba.com/stats/leaguedashplayerstats?College=&Conference=&Country=&DateFrom=&DateTo=&Division=&DraftPick=&DraftYear=&GameScope=&GameSegment=&Height=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerExperience=&PlayerPosition=&PlusMinus=N&Rank=N&Season={season}&SeasonSegment=&SeasonType=Regular+Season&ShotClockRange=&StarterBench=&TeamID=0&TwoWay=0&VsConference=&VsDivision=&Weight="
+    param = f"{season}-{season % 100 + 1}"
+    print(param)
+
+    season_stats_url = f"https://stats.nba.com/stats/leaguedashplayerstats?College=&Conference=&Country=&DateFrom=&DateTo=&Division=&DraftPick=&DraftYear=&GameScope=&GameSegment=&Height=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerExperience=&PlayerPosition=&PlusMinus=N&Rank=N&Season={param}&SeasonSegment=&SeasonType=Regular+Season&ShotClockRange=&StarterBench=&TeamID=0&TwoWay=0&VsConference=&VsDivision=&Weight="
     season_stats_headers = {"Host": "stats.nba.com", "Connection": "keep-alive", "Accept": "application/json, text/plain, */*", "x-nba-stats-origin": "stats", "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36", "Referer": "https://stats.nba.com/players/traditional/?sort=PTS&dir=-1", "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "en-US,en;q=0.9"}
 
     req = urllib.request.Request(url=season_stats_url, headers=season_stats_headers)
@@ -191,6 +194,10 @@ def export_data(game_day_matrix, filename):
 
 
 def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_year, filename):
+    if begin_month < 6:
+        seasonal_stats = get_seasonal_stats(begin_year-1)
+    else:
+        seasonal_stats = get_seasonal_stats(begin_year)
     for year in range(begin_year, end_year+1):
         s_month = 1
         e_month = 12
@@ -201,8 +208,10 @@ def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_yea
         for month in range(s_month, e_month+1):
             s_day = 1
             e_day = 31
-            if month in range(5, 10):
+            if month in range(5, 9):
                 continue
+            if month == 9:
+                seasonal_stats = get_seasonal_stats(year)
             if month == begin_month and year == begin_year:
                 s_day = begin_day
             if month == end_month and year == end_year:
@@ -218,7 +227,7 @@ def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_yea
                         if str(game_id)[2] is not "2":
                             games_skipped += 1
                             continue
-                        target_game = NBAGame(game_id, games)
+                        target_game = NBAGame(game_id, games, seasonal_stats)
                         game_data = target_game.compile_data()
                         game_day_matrix.append(game_data)
 
@@ -235,9 +244,7 @@ def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_yea
                         raise
 
 
-NBAGame("0021801065", games_on_date("03", "20", "2019"), get_seasonal_stats("2018-19")).print()
-
-# csv_filename = "16-17_data.csv"
-# export_range(10, 10, 2016, 5, 1, 2017, csv_filename)
+csv_filename = "test.csv"
+export_range(1, 10, 2016, 5, 1, 2017, csv_filename)
 
 # export_range(10, 27, 2015, 4, 10, 2019, csv_filename)
