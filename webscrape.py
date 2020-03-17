@@ -74,8 +74,8 @@ class NBAGame:
         attrs = vars(self)
         print('\n'.join("%s: %s" % item for item in attrs.items()))
 
-    # inserts all data into a one-dimension array
-    def compile_data(self):
+    # inserts box-score data into an array
+    def old_compile_data(self):
         game_data_array = []  # stores game statistics --> will be a row in the machine learning training file
         omit_stat_indexes = [10, 13, 16, 20]  # indexes of statistics to omit (FGM, FTM, 3PM, REB)
         stats_per_player = 16
@@ -116,6 +116,51 @@ class NBAGame:
                 elif x == 8:  # modify timestamp into seconds
                     timestamp = re.match(r"(\d+):(\d+)", stat).groups()
                     stat = int(timestamp[0])*60 + int(timestamp[1])
+                game_data_array.append(stat)
+
+        # fills in 0s if less than 13 players
+        if len(self.away_team_players) < 13:
+            missing_players = 13 - len(self.away_team_players)
+            for i in range(missing_players * stats_per_player):
+                game_data_array.append(0)
+
+        game_data_array.append(int(self.home_win))  # adds win result to array
+        return game_data_array
+
+    # inserts seasonal data into an array
+    def compile_data(self):
+        game_data_array = []  # stores game statistics --> will be a row in the machine learning training file
+        stat_indexes = [0, 5, 6, 8, 9, 11, 12, 14, 15, 16, 18, 19, 20, 21, 23, 25, 26]  # indexes of statistics
+        stats_per_player = 17
+
+        game_data_array.append(int(self.game_id))
+        # loops through all players on the home team and adds relevant data to array
+        for i in range(len(self.home_team_players)):
+            if i > 12:
+                break
+            for x in range(0, len(self.home_team_players[i])):
+                if x not in stat_indexes:
+                    continue
+                stat = self.home_team_players[i][x]
+                if stat is None:
+                    stat = 0
+                game_data_array.append(stat)
+
+        # fills in 0s if less than 13 players
+        if len(self.home_team_players) < 13:
+            missing_players = 13 - len(self.home_team_player_ids)
+            for i in range(missing_players * stats_per_player):
+                game_data_array.append(0)
+
+        for i in range(len(self.away_team_players)):
+            if i > 12:
+                break
+            for x in range(0, len(self.away_team_players[i])):
+                if x not in stat_indexes:
+                    continue
+                stat = self.away_team_players[i][x]
+                if stat is None:
+                    stat = 0
                 game_data_array.append(stat)
 
         # fills in 0s if less than 13 players
@@ -244,7 +289,11 @@ def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_yea
                         raise
 
 
-csv_filename = "test.csv"
-export_range(1, 10, 2016, 5, 1, 2017, csv_filename)
-
+# export_range(1, 10, 2016, 5, 1, 2017, csv_filename)
 # export_range(10, 27, 2015, 4, 10, 2019, csv_filename)
+csv_filename = "test.csv"
+seasonal_stat_list = get_seasonal_stats(2019)
+games_list = games_on_date(12, 7, 2019)
+game_ids_list = get_game_ids(games)
+game = NBAGame(game_ids_list[0], games_list, seasonal_stat_list)
+print(game.compile_data())
