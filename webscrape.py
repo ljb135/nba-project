@@ -57,10 +57,21 @@ class NBAGame:
     def __set_seasonal_stats(self):
         self.json_file = stats_in_game(self.game_id)  # uses game-specific box score JSON
         for player in self.json_file["resultSets"][0]["rowSet"]:  # increment through all players
-            if player[1] == self.home_team_id:  # add player to respective team
-                self.home_team_players.append(self.seasonal_stats[str(player[4])])
-            else:
-                self.away_team_players.append(self.seasonal_stats[str(player[4])])
+            # try:
+                if player[1] == self.home_team_id:  # add player to respective team
+                    self.home_team_players.append(self.seasonal_stats[str(player[4])])
+                else:
+                    self.away_team_players.append(self.seasonal_stats[str(player[4])])
+            # except KeyError:
+            #     zero_player = []
+            #     print("in exception")
+            #     seasonal_stat_length = 61
+            #     for i in range(seasonal_stat_length):
+            #         zero_player.append(0)
+            #     if player[1] == self.home_team_id:  # add player to respective team
+            #         self.home_team_players.append(zero_player)
+            #     else:
+            #         self.away_team_players.append(zero_player)
 
     # compares scores and determines which team won
     def __set_result(self):
@@ -148,7 +159,7 @@ class NBAGame:
 
         # fills in 0s if less than 13 players
         if len(self.home_team_players) < 13:
-            missing_players = 13 - len(self.home_team_player_ids)
+            missing_players = 13 - len(self.home_team_players)
             for i in range(missing_players * stats_per_player):
                 game_data_array.append(0)
 
@@ -290,10 +301,5 @@ def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_yea
 
 
 # export_range(1, 10, 2016, 5, 1, 2017, csv_filename)
-# export_range(10, 27, 2015, 4, 10, 2019, csv_filename)
 csv_filename = "test.csv"
-seasonal_stat_list = get_seasonal_stats(2019)
-games_list = games_on_date(12, 7, 2019)
-game_ids_list = get_game_ids(games)
-game = NBAGame(game_ids_list[0], games_list, seasonal_stat_list)
-print(game.compile_data())
+export_range(4, 7, 2019, 11, 1, 2019, csv_filename)
