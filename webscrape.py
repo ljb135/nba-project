@@ -8,9 +8,10 @@ import re
 
 
 class NBAGame:
-    def __init__(self, game_id, json_file):  # object class used to store information regarding a specific NBA Game
+    def __init__(self, game_id, json_file, seasonal_stats):  # object class used to store information regarding a specific NBA Game
         self.game_id = game_id
         self.json_file = json_file
+        self.seasonal_stats = seasonal_stats
 
         self.home_team_id = None
         self.away_team_id = None
@@ -22,7 +23,7 @@ class NBAGame:
 
         self.__set_team_ids()
         self.__set_points()
-        self.__set_player_stats()
+        self.__set_seasonal_stats()
         self.__set_result()
 
     # finds the match lineup in "Series Standings" and sets the appropriate values
@@ -51,6 +52,15 @@ class NBAGame:
                 self.home_team_players.append(player)
             else:
                 self.away_team_players.append(player)
+
+    # finds player stats in "PlayerStats" and sets the appropriate values
+    def __set_seasonal_stats(self):
+        self.json_file = stats_in_game(self.game_id)  # uses game-specific box score JSON
+        for player in self.json_file["resultSets"][0]["rowSet"]:  # increment through all players
+            if player[1] == self.home_team_id:  # add player to respective team
+                self.home_team_players.append(self.seasonal_stats[str(player[4])])
+            else:
+                self.away_team_players.append(self.seasonal_stats[str(player[4])])
 
     # compares scores and determines which team won
     def __set_result(self):
@@ -145,6 +155,25 @@ def stats_in_game(game_id):
     return json_file
 
 
+def get_seasonal_stats(season):
+    season_stats_url = f"https://stats.nba.com/stats/leaguedashplayerstats?College=&Conference=&Country=&DateFrom=&DateTo=&Division=&DraftPick=&DraftYear=&GameScope=&GameSegment=&Height=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerExperience=&PlayerPosition=&PlusMinus=N&Rank=N&Season={season}&SeasonSegment=&SeasonType=Regular+Season&ShotClockRange=&StarterBench=&TeamID=0&TwoWay=0&VsConference=&VsDivision=&Weight="
+    season_stats_headers = {"Host": "stats.nba.com", "Connection": "keep-alive", "Accept": "application/json, text/plain, */*", "x-nba-stats-origin": "stats", "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36", "Referer": "https://stats.nba.com/players/traditional/?sort=PTS&dir=-1", "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "en-US,en;q=0.9"}
+
+    req = urllib.request.Request(url=season_stats_url, headers=season_stats_headers)
+    response = urllib.request.urlopen(req)
+    data = response.read()
+    data = str(gzip.decompress(data), 'utf-8')
+    json_file = json.loads(data)
+
+    season_stats = {}
+    for player in json_file["resultSets"][0]["rowSet"]:
+        id = str(player[0])
+        del player[0: 4]
+        season_stats[id] = player
+
+    return season_stats
+
+
 # returns all the games played on a specific day
 def get_game_ids(json_file):
     game_list = json_file["resultSets"][0]["rowSet"]
@@ -206,6 +235,9 @@ def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_yea
                         raise
 
 
-csv_filename = "16-17_data.csv"
-export_range(10, 10, 2016, 5, 1, 2017, csv_filename)
+NBAGame("0021801065", games_on_date("03", "20", "2019"), get_seasonal_stats("2018-19")).print()
+
+# csv_filename = "16-17_data.csv"
+# export_range(10, 10, 2016, 5, 1, 2017, csv_filename)
+
 # export_range(10, 27, 2015, 4, 10, 2019, csv_filename)
