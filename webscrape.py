@@ -57,21 +57,17 @@ class NBAGame:
     def __set_seasonal_stats(self):
         self.json_file = stats_in_game(self.game_id)  # uses game-specific box score JSON
         for player in self.json_file["resultSets"][0]["rowSet"]:  # increment through all players
-            # try:
+            try:
                 if player[1] == self.home_team_id:  # add player to respective team
                     self.home_team_players.append(self.seasonal_stats[str(player[4])])
                 else:
                     self.away_team_players.append(self.seasonal_stats[str(player[4])])
-            # except KeyError:
-            #     zero_player = []
-            #     print("in exception")
-            #     seasonal_stat_length = 61
-            #     for i in range(seasonal_stat_length):
-            #         zero_player.append(0)
-            #     if player[1] == self.home_team_id:  # add player to respective team
-            #         self.home_team_players.append(zero_player)
-            #     else:
-            #         self.away_team_players.append(zero_player)
+            except KeyError:
+                zero_player = [0] * 61
+                if player[1] == self.home_team_id:  # add player to respective team
+                    self.home_team_players.append(zero_player)
+                else:
+                    self.away_team_players.append(zero_player)
 
     # compares scores and determines which team won
     def __set_result(self):
@@ -213,8 +209,6 @@ def stats_in_game(game_id):
 
 def get_seasonal_stats(season):
     param = f"{season}-{season % 100 + 1}"
-    print(param)
-
     season_stats_url = f"https://stats.nba.com/stats/leaguedashplayerstats?College=&Conference=&Country=&DateFrom=&DateTo=&Division=&DraftPick=&DraftYear=&GameScope=&GameSegment=&Height=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerExperience=&PlayerPosition=&PlusMinus=N&Rank=N&Season={param}&SeasonSegment=&SeasonType=Regular+Season&ShotClockRange=&StarterBench=&TeamID=0&TwoWay=0&VsConference=&VsDivision=&Weight="
     season_stats_headers = {"Host": "stats.nba.com", "Connection": "keep-alive", "Accept": "application/json, text/plain, */*", "x-nba-stats-origin": "stats", "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36", "Referer": "https://stats.nba.com/players/traditional/?sort=PTS&dir=-1", "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "en-US,en;q=0.9"}
 
@@ -268,6 +262,7 @@ def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_yea
                 continue
             if month == 9:
                 seasonal_stats = get_seasonal_stats(year)
+                continue
             if month == begin_month and year == begin_year:
                 s_day = begin_day
             if month == end_month and year == end_year:
@@ -301,5 +296,6 @@ def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_yea
 
 
 # export_range(1, 10, 2016, 5, 1, 2017, csv_filename)
-csv_filename = "test.csv"
-export_range(4, 7, 2019, 11, 1, 2019, csv_filename)
+# export_range(10, 27, 2015, 4, 10, 2019, csv_filename)
+csv_filename = "19-20_data.csv"
+export_range(1, 10, 2019, 3, 17, 2020, csv_filename)
