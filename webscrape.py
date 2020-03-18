@@ -297,5 +297,5 @@ def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_yea
 
 # export_range(1, 10, 2016, 5, 1, 2017, csv_filename)
 # export_range(10, 27, 2015, 4, 10, 2019, csv_filename)
-csv_filename = "19-20_data.csv"
-export_range(1, 10, 2019, 3, 17, 2020, csv_filename)
+csv_filename = "17-18_data.csv"
+export_range(10, 1, 2017, 4, 29, 2018, csv_filename)
