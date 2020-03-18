@@ -3,6 +3,7 @@ from pandas import *
 from keras.models import Sequential
 from keras.models import load_model
 from keras.layers import Dense
+import csv
 
 
 def read_data(train_csv_filename):
@@ -23,13 +24,13 @@ def train(train_csv_filename, excluded):
     Y = train_dataset[:, 443 - (26*excluded)]
 
     model = Sequential()
-    model.add(Dense(16, input_dim=442 - (26*excluded), activation='relu'))
+    model.add(Dense(28, input_dim=442 - (26*excluded), activation='relu'))
     model.add(Dense(8, activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
 
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    model.fit(X, Y, epochs=400, batch_size=16)
+    model.fit(X, Y, epochs=400, batch_size=32)
     return model
 
 
@@ -41,21 +42,46 @@ def test(model, test_csv_filename, excluded):
 
     print(model.evaluate(x, y))
 
-def predict(model, test_csv_filename, excluded):
-    predict_dataset = loadtxt(test_csv_filename, delimiter=',')
+
+def predict(model, predict_csv_filename, excluded):
+    predict_dataset = loadtxt(predict_csv_filename, delimiter=',')
 
     x = predict_dataset[:, 1:443 - (26 * excluded)]
     prediction = model.predict(x)
 
-    for x in prediction:
-        print(float(x))
+    data = read_csv_file(predict_csv_filename)
+    num_correct = 0
+    total = 0
+
+    for i in range(len(prediction)):
+        if prediction[i] <= 0.5:
+            prediction[i] = 0
+        else:
+            prediction[i] = 1
+    for x in range(len(data)):
+        if prediction[x] == int(data[x][443]):
+            print(str(prediction[x]) + " " + str(int(data[x][443])) + " correct")
+            num_correct += 1
+        else:
+            print(str(prediction[x]) + " " + str(int(data[x][443])) + " incorrect")
+        total += 1
+    accuracy = num_correct/total
+    print("Accuracy: " + str(accuracy))
+
+
+def read_csv_file(filename):
+    data_matrix = []
+    with open(filename) as csv_file:
+        csv_reader = csv.reader(csv_file)
+        for row in csv_reader:
+            data_matrix.append(row)
+    return data_matrix
 
 # print(read_data("training_data.csv")[0])
 
-
 neural_net = train("training_data.csv", 0)
 test(neural_net, "testing_data.csv", 0)
-predict(neural_net, "testing_data.csv", 0)
+predict(neural_net, "predict_data.csv", 0)
 # neural_net.save_weights("model_weights.h5")
 
 # print(model.predict(x))
