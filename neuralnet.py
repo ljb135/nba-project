@@ -24,13 +24,13 @@ def train(train_csv_filename, excluded):
     Y = train_dataset[:, 443 - (26*excluded)]
 
     model = Sequential()
-    model.add(Dense(28, input_dim=442 - (26*excluded), activation='relu'))
-    model.add(Dense(8, activation='relu'))
+    model.add(Dense(64, input_dim=442 - (26*excluded), activation='relu'))
+    model.add(Dense(16, activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
 
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    model.fit(X, Y, epochs=400, batch_size=32)
+    model.fit(X, Y, epochs=400, batch_size=64)
     return model
 
 
@@ -59,11 +59,11 @@ def predict(model, predict_csv_filename, excluded):
         else:
             prediction[i] = 1
     for x in range(len(data)):
-        if prediction[x] == int(data[x][443]):
-            print(str(prediction[x]) + " " + str(int(data[x][443])) + " correct")
+        if prediction[x][0] == int(data[x][443]):
+            print(str(x+1) + ") " + str(int(prediction[x][0])) + " " + str(int(data[x][443])) + " correct")
             num_correct += 1
         else:
-            print(str(prediction[x]) + " " + str(int(data[x][443])) + " incorrect")
+            print(str(x+1) + ") " + str(int(prediction[x][0])) + " " + str(int(data[x][443])) + " incorrect")
         total += 1
     accuracy = num_correct/total
     print("Accuracy: " + str(accuracy))
@@ -77,7 +77,6 @@ def read_csv_file(filename):
             data_matrix.append(row)
     return data_matrix
 
-# print(read_data("training_data.csv")[0])
 
 neural_net = train("training_data.csv", 0)
 test(neural_net, "testing_data.csv", 0)
