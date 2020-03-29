@@ -6,22 +6,12 @@ from keras.layers import Dense
 import csv
 
 
-def read_data(train_csv_filename):
-    data = loadtxt(train_csv_filename, delimiter=',')
-    d_list = []
-    for i in range(1, 27):
-        d_list.append(i * 16 - 1)
-        d_list.append(i * 16)
-    data = delete(data, d_list, 1)
-    return data
-
-
 def train(train_csv_filename, excluded):
     train_dataset = loadtxt(train_csv_filename, delimiter=',')
 
     # split into input (X) and output (Y) variables
-    X = train_dataset[:, 1:443 - (26*excluded)]
-    Y = train_dataset[:, 443 - (26*excluded)]
+    X = train_dataset[:, 2:444 - (26*excluded)]
+    Y = train_dataset[:, 0]
 
     model = Sequential()
     model.add(Dense(64, input_dim=442 - (26*excluded), activation='relu'))
@@ -37,8 +27,8 @@ def train(train_csv_filename, excluded):
 def test(model, test_csv_filename, excluded):
     test_dataset = loadtxt(test_csv_filename, delimiter=',')
 
-    x = test_dataset[:, 1:443 - (26*excluded)]
-    y = test_dataset[:, 443 - (26*excluded)]
+    x = test_dataset[:, 2:444 - (26*excluded)]
+    y = test_dataset[:, 0]
 
     print(model.evaluate(x, y))
 
@@ -46,7 +36,7 @@ def test(model, test_csv_filename, excluded):
 def predict(model, predict_csv_filename, excluded):
     predict_dataset = loadtxt(predict_csv_filename, delimiter=',')
 
-    x = predict_dataset[:, 1:443 - (26 * excluded)]
+    x = predict_dataset[:, 2:444 - (26 * excluded)]
     prediction = model.predict(x)
 
     data = read_csv_file(predict_csv_filename)

@@ -49,39 +49,29 @@ class NBAGame:
     def __set_player_stats(self):
         self.json_file = stats_in_game(self.game_id)  # uses game-specific box score JSON
         for player in self.json_file["resultSets"][0]["rowSet"]:  # increment through all players
-            mins_played = player[8]
-            if mins_played is None: mins_played = 0
-            timestamp = re.match(r"(\d+):(\d+)", mins_played).groups()
-            mins_played = (int(timestamp[0]) * 60 + int(timestamp[1])) / 60
-            if mins_played > 0:
-                if player[1] == self.home_team_id:  # add player to respective team
-                    self.home_team_players.append(player)
-                else:
-                    self.away_team_players.append(player)
+            if player[1] == self.home_team_id:  # add player to respective team
+                self.home_team_players.append(player)
+            else:
+                self.away_team_players.append(player)
 
-    # finds player stats in "PlayerStats" and sets the appropriate values
+    # finds player stats in "PlayerStats" and sets the appropriate values ***if KEYERROR occurs add try except where except just continues
     def __set_seasonal_stats(self):
         self.json_file = stats_in_game(self.game_id)  # uses game-specific box score JSON
         for player in self.json_file["resultSets"][0]["rowSet"]:  # increment through all players
-            try:
-                mins_played = player[8]
-                if mins_played is None:
-                    mins_played = 0
-                else:
-                    timestamp = re.match(r"(\d+):(\d+)", mins_played).groups()
-                    mins_played = (int(timestamp[0]) * 60 + int(timestamp[1])) / 60
-                if mins_played > 0:
-                    seasonal_stats = self.seasonal_stats[str(player[5])]
-                    if player[1] == self.home_team_id:  # add player to respective team
-                        self.home_team_players.append(seasonal_stats)
-                    else:
-                        self.away_team_players.append(seasonal_stats)
-            except KeyError:
-                zero_player = [0] * 61
+            mins_played = player[8]
+
+            if mins_played is None:
+                mins_played = 0
+            else:
+                timestamp = re.match(r"(\d+):(\d+)", mins_played).groups()
+                mins_played = (int(timestamp[0]) * 60 + int(timestamp[1])) / 60
+
+            if mins_played > 0:
+                seasonal_stats = self.seasonal_stats[str(player[5])]
                 if player[1] == self.home_team_id:  # add player to respective team
-                    self.home_team_players.append(zero_player)
+                    self.home_team_players.append(seasonal_stats)
                 else:
-                    self.away_team_players.append(zero_player)
+                    self.away_team_players.append(seasonal_stats)
 
     # compares scores and determines which team won
     def __set_result(self):
@@ -91,54 +81,89 @@ class NBAGame:
             self.home_win = False
 
     # prints all variables
-    def print(self):
+    def print_vars(self):
         attrs = vars(self)
         print('\n'.join("%s: %s" % item for item in attrs.items()))
 
-
     # inserts seasonal data into an array
     def compile_data(self):
-        game_data_array = []  # stores game statistics --> will be a row in the machine learning training file
+        self.json_file = stats_in_game(self.game_id)
+        game_data_array = []  # stores game statistics --> will be a row in the csv file
         stat_indexes = [0, 5, 6, 8, 9, 11, 12, 14, 15, 16, 18, 19, 20, 21, 23, 25, 26]  # indexes of statistics
+        edit_stat_indexes [] # indexes of stats to be modified by mins_ratio
         stats_per_player = 17
 
-        game_data_array.append(int(self.game_id))
+        game_data_array.append(int(self.home_win))  # adds win result to array
+        game_data_array.append(int(self.game_id)) # adds gameID to array
+
         # loops through all players on the home team and adds relevant data to array
         for i in range(len(self.home_team_players)):
-            if i > 12:
+            if i > 12: # break if more than 13 players in list
                 break
+
+            mins_played = self.json_file["resultSets"][0]["rowSet"][i][8]
+            if mins_played is None:
+                mins_played = 0
+            else:
+                timestamp = re.match(r"(\d+):(\d+)", mins_played).groups()
+                mins_played = (int(timestamp[0]) * 60 + int(timestamp[1])) / 60
+
+            mins_ratio = mins_played / (self.home_team_players[i][5])
+
             for x in range(0, len(self.home_team_players[i])):
                 if x not in stat_indexes:
                     continue
-                stat = self.home_team_players[i][x]
-                if stat is None:
-                    stat = 0
-                game_data_array.append(stat)
+                elif x is 5:
+                    stat = mins_played
+                else:
+                    stat = self.home_team_players[i][x]
+                    if stat is None:
+                        stat = 0
 
-        # fills in 0s if less than 13 players
-        if len(self.home_team_players) < 13:
+                if x in edit_stat_indexes:
+                    game_data_array.append(stat * mins_ratio)
+                else:
+                    game_data_array.append(stat)
+
+        if len(self.home_team_players) < 13: # fills in 0s if less than 13 players
             missing_players = 13 - len(self.home_team_players)
             for i in range(missing_players * stats_per_player):
                 game_data_array.append(0)
 
+
         for i in range(len(self.away_team_players)):
-            if i > 12:
+            if i > 12:  # break if more than 13 players in list
                 break
+
+            mins_played = self.json_file["resultSets"][0]["rowSet"][i][8]
+            if mins_played is None:
+                mins_played = 0
+            else:
+                timestamp = re.match(r"(\d+):(\d+)", mins_played).groups()
+                mins_played = (int(timestamp[0]) * 60 + int(timestamp[1])) / 60
+
+            mins_ratio = mins_played / (self.away_team_players[i][5])
+
             for x in range(0, len(self.away_team_players[i])):
                 if x not in stat_indexes:
                     continue
-                stat = self.away_team_players[i][x]
-                if stat is None:
-                    stat = 0
-                game_data_array.append(stat)
+                elif x is 5:
+                    stat = mins_played
+                else:
+                    stat = self.away_team_players[i][x]
+                    if stat is None:
+                        stat = 0
 
-        # fills in 0s if less than 13 players
-        if len(self.away_team_players) < 13:
+                if x in edit_stat_indexes:
+                    game_data_array.append(stat * mins_ratio)
+                else:
+                    game_data_array.append(stat)
+
+        if len(self.away_team_players) < 13: # fills in 0s if less than 13 players
             missing_players = 13 - len(self.away_team_players)
             for i in range(missing_players * stats_per_player):
                 game_data_array.append(0)
 
-        game_data_array.append(int(self.home_win))  # adds win result to array
         return game_data_array
 
 
@@ -214,25 +239,30 @@ def export_data(game_day_matrix, filename):
 def collect_data(date_range, filename):
     start_month = date_range[0].month
     start_year = date_range[0].year
+
     if start_month > 9:
         season = start_year
         seasonal_stats = get_seasonal_stats(season)
     else:
         season = start_year - 1
         seasonal_stats = get_seasonal_stats(season)
-    changed_season = False
+
     for date in date_range:
         year = date.year
         month = date.month
         day = date.day
+
         if month in range(5, 10):
             continue
+
+        changed_season = False
         if month == 10 and changed_season is False:
             season += 1
             seasonal_stats = get_seasonal_stats(season)
             changed_season = True
         elif month != 10:
             changed_season = False
+
         try:
             games = games_on_date(str(month).zfill(2), str(day).zfill(2), year)
             game_id_list = get_game_ids(games)
@@ -250,9 +280,9 @@ def collect_data(date_range, filename):
             time = datetime.datetime.now().strftime("%I:%M:%S %p")
             games_added = len(game_id_list) - games_skipped
 
+            export_data(game_day_matrix, filename)
             print(str(month).zfill(2), str(day).zfill(2), year, f": {games_added} games added\t({time})")
 
-            export_data(game_day_matrix, filename)
         except HTTPError as ex:
             if ex.code == 400:
                 break
@@ -261,17 +291,7 @@ def collect_data(date_range, filename):
 
 
 csv_filename = "11-12_data.csv"
-# export_range(10, 20, 2012, 4, 25, 2013, csv_filename)
 start_date = datetime.datetime(2011, 12, 25)
 end_date = datetime.datetime(2012, 4, 30)
 date_list = pd.date_range(start_date, end_date)
 collect_data(date_list, csv_filename)
-
-
-# games = games_on_date(12, 7, 2018)
-# game_id_list = get_game_ids(games)
-# json_file = stats_in_game(game_id_list[0])
-# # print(json.dumps(json_file["resultSets"][0]["rowSet"], indent = 4))
-# print(json_file["resultSets"][0]["rowSet"][0][8])
-# json_file = get_seasonal_stats(2019)
-# print(json.dumps(json_file, indent = 4))
