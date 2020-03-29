@@ -5,6 +5,7 @@ import gzip
 import json
 import csv
 import re
+import pandas as pd
 
 
 class NBAGame:
@@ -197,59 +198,58 @@ def export_data(game_day_matrix, filename):
         csv_writer.writerows(game_day_matrix)  # writing the data rows
 
 
-def export_range(begin_month, begin_day, begin_year, end_month, end_day, end_year, filename):
-    if begin_month < 6:
-        seasonal_stats = get_seasonal_stats(begin_year-1)
+def collect_data(date_range, filename):
+    start_month = date_range[0].month
+    start_year = date_range[0].year
+    if start_month > 9:
+        season = start_year
+        seasonal_stats = get_seasonal_stats(season)
     else:
-        seasonal_stats = get_seasonal_stats(begin_year)
-    for year in range(begin_year, end_year+1):
-        s_month = 1
-        e_month = 12
-        if year == begin_year:
-            s_month = begin_month
-        if year == end_year:
-            e_month = end_month
-        for month in range(s_month, e_month+1):
-            s_day = 1
-            e_day = 31
-            if month in range(5, 9):
-                continue
-            if month == 9:
-                seasonal_stats = get_seasonal_stats(year)
-                continue
-            if month == begin_month and year == begin_year:
-                s_day = begin_day
-            if month == end_month and year == end_year:
-                e_day = end_day
-            for day in range(s_day, e_day+1):
-                try:
-                    games = games_on_date(str(month).zfill(2), str(day).zfill(2), year)
-                    game_id_list = get_game_ids(games)
-                    game_day_matrix = []
-                    games_skipped = 0
+        season = start_year - 1
+        seasonal_stats = get_seasonal_stats(season)
+    changed_season = False
+    for date in date_range:
+        year = date.year
+        month = date.month
+        day = date.day
+        if month in range(5, 10):
+            continue
+        if month == 10 and changed_season is False:
+            season += 1
+            seasonal_stats = get_seasonal_stats(season)
+            changed_season = True
+        elif month != 10:
+            changed_season = False
+        try:
+            games = games_on_date(str(month).zfill(2), str(day).zfill(2), year)
+            game_id_list = get_game_ids(games)
+            game_day_matrix = []
+            games_skipped = 0
 
-                    for game_id in game_id_list:
-                        if str(game_id)[2] is not "2":
-                            games_skipped += 1
-                            continue
-                        target_game = NBAGame(game_id, games, seasonal_stats)
-                        game_data = target_game.compile_data()
-                        game_day_matrix.append(game_data)
+            for game_id in game_id_list:
+                if str(game_id)[2] is not "2":
+                    games_skipped += 1
+                    continue
+                target_game = NBAGame(game_id, games, seasonal_stats)
+                game_data = target_game.compile_data()
+                game_day_matrix.append(game_data)
 
-                    time = datetime.datetime.now().strftime("%I:%M:%S %p")
-                    games_added = len(game_id_list) - games_skipped
+            time = datetime.datetime.now().strftime("%I:%M:%S %p")
+            games_added = len(game_id_list) - games_skipped
 
-                    print(str(month).zfill(2), str(day).zfill(2), year, f": {games_added} games added\t({time})")
+            print(str(month).zfill(2), str(day).zfill(2), year, f": {games_added} games added\t({time})")
 
-                    export_data(game_day_matrix, filename)
-                except HTTPError as ex:
-                    if ex.code == 400:
-                        break
-                    else:
-                        raise
+            export_data(game_day_matrix, filename)
+        except HTTPError as ex:
+            if ex.code == 400:
+                break
+            else:
+                raise
 
 
-# export_range(1, 10, 2016, 5, 1, 2017, csv_filename)
-# export_range(10, 27, 2015, 4, 10, 2019, csv_filename)
-csv_filename = "12-13_data.csv"
-export_range(10, 20, 2012, 4, 25, 2013, csv_filename)
+csv_filename = "11-12_data.csv"
+# export_range(10, 20, 2012, 4, 25, 2013, csv_filename)
+start_date = datetime.datetime(2011, 12, 25)
+end_date = datetime.datetime(2012, 4, 30)
+date_list = pd.date_range(start_date, end_date)
+collect_data(date_list, csv_filename)

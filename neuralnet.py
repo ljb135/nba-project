@@ -60,10 +60,10 @@ def predict(model, predict_csv_filename, excluded):
             prediction[i] = 1
     for x in range(len(data)):
         if prediction[x][0] == int(data[x][443]):
-            print(str(x+1) + ") " + str(int(prediction[x][0])) + " " + str(int(data[x][443])) + " correct")
+            print(str(x+1) + ")", prediction[x][0], data[x][443], "correct")
             num_correct += 1
         else:
-            print(str(x+1) + ") " + str(int(prediction[x][0])) + " " + str(int(data[x][443])) + " incorrect")
+            print(str(x + 1) + ")", prediction[x][0], data[x][443], "incorrect")
         total += 1
     accuracy = num_correct/total
     print("Accuracy: " + str(accuracy))
