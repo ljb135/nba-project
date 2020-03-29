@@ -90,7 +90,7 @@ class NBAGame:
         self.json_file = stats_in_game(self.game_id)
         game_data_array = []  # stores game statistics --> will be a row in the csv file
         stat_indexes = [0, 5, 6, 8, 9, 11, 12, 14, 15, 16, 18, 19, 20, 21, 23, 25, 26]  # indexes of statistics
-        # edit_stat_indexes [] # indexes of stats to be modified
+        edit_stat_indexes = [6, 9, 12, 15, 16, 18, 19, 20, 21, 23, 25, 26] # indexes of stats to be modified
         stats_per_player = 17
 
         game_data_array.append(int(self.home_win))  # adds win result to array
@@ -202,11 +202,6 @@ def stats_in_game(game_id):
     json_file = json.loads(data)
     return json_file
 
-# gathers advanced stats for all the players in a given season
-# def get_advanced_stats(season):
-# #     jiebin can you write this method
-# #     just get all the basic advanced stats we will sort out which ones we want later
-
 
 # gathers seasonal stats for all players during a specified season
 def get_seasonal_stats(season):
@@ -224,7 +219,24 @@ def get_seasonal_stats(season):
     for player in json_file["resultSets"][0]["rowSet"]:
         player_name = str(player[1])
         del player[0: 4]
+        del player[30:]
         season_stats[player_name] = player
+
+    param = f"{season}-{season % 100 + 1}"
+    season_stats_url = f"https://stats.nba.com/stats/leaguedashplayerstats?College=&Conference=&Country=&DateFrom=&DateTo=&Division=&DraftPick=&DraftYear=&GameScope=&GameSegment=&Height=&LastNGames=0&LeagueID=00&Location=&MeasureType=Advanced&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerExperience=&PlayerPosition=&PlusMinus=N&Rank=N&Season={param}&SeasonSegment=&SeasonType=Regular+Season&ShotClockRange=&StarterBench=&TeamID=0&TwoWay=0&VsConference=&VsDivision=&Weight="
+    season_stats_headers = {"Host": "stats.nba.com", "Connection": "keep-alive", "Accept": "application/json, text/plain, */*", "x-nba-stats-origin": "stats", "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36", "Referer": "https://stats.nba.com/players/traditional/?sort=PTS&dir=-1", "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "en-US,en;q=0.9"}
+
+    req = urllib.request.Request(url=season_stats_url, headers=season_stats_headers)
+    response = urllib.request.urlopen(req)
+    data = response.read()
+    data = str(gzip.decompress(data), 'utf-8')
+    json_file = json.loads(data)
+
+    for player in json_file["resultSets"][0]["rowSet"]:
+        player_name = str(player[1])
+        del player[0: 10]
+        del player[32:]
+        season_stats[player_name] = season_stats[player_name] + player
 
     return season_stats
 
@@ -290,8 +302,9 @@ def collect_data(date_range, filename):
                 raise
 
 
-csv_filename = "11-12_data.csv"
-start_date = datetime.datetime(2011, 12, 25)
-end_date = datetime.datetime(2012, 4, 30)
-date_list = pd.date_range(start_date, end_date)
-collect_data(date_list, csv_filename)
+# csv_filename = "11-12_data.csv"
+# start_date = datetime.datetime(2011, 12, 25)
+# end_date = datetime.datetime(2012, 4, 30)
+# date_list = pd.date_range(start_date, end_date)
+# collect_data(date_list, csv_filename)
+print(get_seasonal_stats(2019))

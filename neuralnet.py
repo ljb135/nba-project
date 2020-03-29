@@ -3,6 +3,8 @@ from pandas import *
 from keras.models import Sequential
 from keras.models import load_model
 from keras.layers import Dense
+from keras.layers import Dropout
+from keras.constraints import maxnorm
 import csv
 
 
@@ -14,13 +16,15 @@ def train(train_csv_filename, excluded):
     Y = train_dataset[:, 0]
 
     model = Sequential()
-    model.add(Dense(64, input_dim=442 - (26*excluded), activation='relu'))
-    model.add(Dense(16, activation='relu'))
+    model.add(Dense(64, input_dim=442 - (26*excluded), activation='tanh', kernel_constraint=maxnorm(3)))
+    model.add(Dropout(0.1))
+    model.add(Dense(16, activation='relu', kernel_constraint=maxnorm(3)))
+    model.add(Dropout(0.1))
     model.add(Dense(1, activation='sigmoid'))
 
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    model.fit(X, Y, epochs=400, batch_size=64)
+    model.fit(X, Y, epochs=600, batch_size=250)
     return model
 
 
