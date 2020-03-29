@@ -49,20 +49,33 @@ class NBAGame:
     def __set_player_stats(self):
         self.json_file = stats_in_game(self.game_id)  # uses game-specific box score JSON
         for player in self.json_file["resultSets"][0]["rowSet"]:  # increment through all players
-            if player[1] == self.home_team_id:  # add player to respective team
-                self.home_team_players.append(player)
-            else:
-                self.away_team_players.append(player)
+            mins_played = player[8]
+            if mins_played is None: mins_played = 0
+            timestamp = re.match(r"(\d+):(\d+)", mins_played).groups()
+            mins_played = (int(timestamp[0]) * 60 + int(timestamp[1])) / 60
+            if mins_played > 0:
+                if player[1] == self.home_team_id:  # add player to respective team
+                    self.home_team_players.append(player)
+                else:
+                    self.away_team_players.append(player)
 
     # finds player stats in "PlayerStats" and sets the appropriate values
     def __set_seasonal_stats(self):
         self.json_file = stats_in_game(self.game_id)  # uses game-specific box score JSON
         for player in self.json_file["resultSets"][0]["rowSet"]:  # increment through all players
             try:
-                if player[1] == self.home_team_id:  # add player to respective team
-                    self.home_team_players.append(self.seasonal_stats[str(player[4])])
+                mins_played = player[8]
+                if mins_played is None:
+                    mins_played = 0
                 else:
-                    self.away_team_players.append(self.seasonal_stats[str(player[4])])
+                    timestamp = re.match(r"(\d+):(\d+)", mins_played).groups()
+                    mins_played = (int(timestamp[0]) * 60 + int(timestamp[1])) / 60
+                if mins_played > 0:
+                    seasonal_stats = self.seasonal_stats[str(player[5])]
+                    if player[1] == self.home_team_id:  # add player to respective team
+                        self.home_team_players.append(seasonal_stats)
+                    else:
+                        self.away_team_players.append(seasonal_stats)
             except KeyError:
                 zero_player = [0] * 61
                 if player[1] == self.home_team_id:  # add player to respective team
@@ -184,9 +197,9 @@ def get_seasonal_stats(season):
 
     season_stats = {}
     for player in json_file["resultSets"][0]["rowSet"]:
-        player_id = str(player[0])
+        player_name = str(player[1])
         del player[0: 4]
-        season_stats[player_id] = player
+        season_stats[player_name] = player
 
     return season_stats
 
@@ -253,3 +266,12 @@ start_date = datetime.datetime(2011, 12, 25)
 end_date = datetime.datetime(2012, 4, 30)
 date_list = pd.date_range(start_date, end_date)
 collect_data(date_list, csv_filename)
+
+
+# games = games_on_date(12, 7, 2018)
+# game_id_list = get_game_ids(games)
+# json_file = stats_in_game(game_id_list[0])
+# # print(json.dumps(json_file["resultSets"][0]["rowSet"], indent = 4))
+# print(json_file["resultSets"][0]["rowSet"][0][8])
+# json_file = get_seasonal_stats(2019)
+# print(json.dumps(json_file, indent = 4))
