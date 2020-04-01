@@ -89,7 +89,7 @@ class NBAGame:
     def compile_data(self):
         self.json_file = stats_in_game(self.game_id)
         game_data_array = []  # stores game statistics --> will be a row in the csv file
-        stat_indexes = [0, 5, 6, 8, 9, 11, 12, 14, 15, 16, 18, 19, 20, 21, 23, 25, 26]  # indexes of statistics
+        stat_indexes = [0, 5, 6, 8, 9, 11, 12, 14, 15, 16, 18, 19, 20, 21, 23, 25, 26, 46, 47]  # indexes of statistics
         edit_stat_indexes = [6, 9, 12, 15, 16, 18, 19, 20, 21, 23, 25, 26] # indexes of stats to be modified
         stats_per_player = 17
 
