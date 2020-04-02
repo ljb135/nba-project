@@ -8,15 +8,15 @@ from keras.constraints import maxnorm
 import csv
 
 
-def train(train_csv_filename, excluded):
+def train(train_csv_filename):
     train_dataset = loadtxt(train_csv_filename, delimiter=',')
 
     # split into input (X) and output (Y) variables
-    X = train_dataset[:, 2:444 - (26*excluded)]
-    Y = train_dataset[:, 0]
+    X = train_dataset[:, 2:]
+    Y = train_dataset[:, 1]
 
     model = Sequential()
-    model.add(Dense(64, input_dim=442 - (26*excluded), activation='tanh', kernel_constraint=maxnorm(3)))
+    model.add(Dense(64, input_dim=546, activation='tanh', kernel_constraint=maxnorm(3)))
     model.add(Dropout(0.1))
     model.add(Dense(16, activation='relu', kernel_constraint=maxnorm(3)))
     model.add(Dropout(0.1))
@@ -28,19 +28,19 @@ def train(train_csv_filename, excluded):
     return model
 
 
-def test(model, test_csv_filename, excluded):
+def test(model, test_csv_filename):
     test_dataset = loadtxt(test_csv_filename, delimiter=',')
 
-    x = test_dataset[:, 2:444 - (26*excluded)]
-    y = test_dataset[:, 0]
+    x = test_dataset[:, 2:]
+    y = test_dataset[:, 1]
 
     print(model.evaluate(x, y))
 
 
-def predict(model, predict_csv_filename, excluded):
+def predict(model, predict_csv_filename):
     predict_dataset = loadtxt(predict_csv_filename, delimiter=',')
 
-    x = predict_dataset[:, 2:444 - (26 * excluded)]
+    x = predict_dataset[:, 2:]
     prediction = model.predict(x)
 
     data = read_csv_file(predict_csv_filename)
@@ -53,11 +53,11 @@ def predict(model, predict_csv_filename, excluded):
         else:
             prediction[i] = 1
     for x in range(len(data)):
-        if prediction[x][0] == int(data[x][443]):
-            print(str(x+1) + ")", prediction[x][0], data[x][443], "correct")
+        if prediction[x][0] == int(data[x][1]):
+            print(str(x+1) + ")", prediction[x][0], data[x][1], "correct")
             num_correct += 1
         else:
-            print(str(x + 1) + ")", prediction[x][0], data[x][443], "incorrect")
+            print(str(x + 1) + ")", prediction[x][0], data[x][1], "incorrect")
         total += 1
     accuracy = num_correct/total
     print("Accuracy: " + str(accuracy))
@@ -72,9 +72,10 @@ def read_csv_file(filename):
     return data_matrix
 
 
-neural_net = train("training_data.csv", 0)
-test(neural_net, "testing_data.csv", 0)
-predict(neural_net, "predict_data.csv", 0)
+stats_excluded = 0
+neural_net = train("training_data.csv")
+test(neural_net, "testing_data.csv")
+predict(neural_net, "predict_data.csv")
 # neural_net.save_weights("model_weights.h5")
 
 # print(model.predict(x))
