@@ -89,9 +89,9 @@ class NBAGame:
     def compile_data(self):
         self.json_file = stats_in_game(self.game_id)
         game_data_array = []  # stores game statistics --> will be a row in the csv file
-        stat_indexes = [0, 5, 6, 8, 9, 11, 12, 14, 15, 16, 18, 19, 20, 21, 23, 25, 26, 46, 47]  # indexes of statistics
+        stat_indexes = [0, 63, 64, 5, 25, 6, 8, 9, 11, 12, 14, 15, 16, 18, 19, 20, 21, 23, 26, 46, 47]  # indexes of statistics
         edit_stat_indexes = [6, 9, 12, 15, 16, 18, 19, 20, 21, 23, 25, 26] # indexes of stats to be modified
-        stats_per_player = 17
+        stats_per_player = 21
 
         game_data_array.append(int(self.home_win))  # adds win result to array
         game_data_array.append(int(self.game_id)) # adds gameID to array
@@ -106,14 +106,12 @@ class NBAGame:
                 mins_played = 0
             else:
                 timestamp = re.match(r"(\d+):(\d+)", mins_played).groups()
-                mins_played = (int(timestamp[0]) * 60 + int(timestamp[1])) / 60
+                mins_played = round((int(timestamp[0]) * 60 + int(timestamp[1])) / 60, 1)
 
-            mins_ratio = mins_played / (self.home_team_players[i][5])
+            mins_ratio = mins_played / self.home_team_players[i][5]
 
-            for x in range(0, len(self.home_team_players[i])):
-                if x not in stat_indexes:
-                    continue
-                elif x is 5:
+            for x in stat_indexes:
+                if x is 5:
                     stat = mins_played
                 else:
                     stat = self.home_team_players[i][x]
@@ -121,7 +119,7 @@ class NBAGame:
                         stat = 0
 
                 if x in edit_stat_indexes:
-                    game_data_array.append(stat * mins_ratio)
+                    game_data_array.append(round(stat * mins_ratio, 1))
                 else:
                     game_data_array.append(stat)
 
@@ -144,10 +142,8 @@ class NBAGame:
 
             mins_ratio = mins_played / (self.away_team_players[i][5])
 
-            for x in range(0, len(self.away_team_players[i])):
-                if x not in stat_indexes:
-                    continue
-                elif x is 5:
+            for x in stat_indexes:
+                if x is 5:
                     stat = mins_played
                 else:
                     stat = self.away_team_players[i][x]
@@ -155,7 +151,7 @@ class NBAGame:
                         stat = 0
 
                 if x in edit_stat_indexes:
-                    game_data_array.append(stat * mins_ratio)
+                    game_data_array.append(round(stat * mins_ratio, 1))
                 else:
                     game_data_array.append(stat)
 
@@ -317,9 +313,9 @@ def collect_data(date_range, filename):
                 raise
 
 
-# csv_filename = "11-12_data.csv"
-# start_date = datetime.datetime(2011, 12, 25)
-# end_date = datetime.datetime(2012, 4, 30)
-# date_list = pd.date_range(start_date, end_date)
-# collect_data(date_list, csv_filename)
-print(get_seasonal_stats(2019))
+csv_filename = "11-12_data.csv"
+start_date = datetime.datetime(2011, 12, 25)
+end_date = datetime.datetime(2012, 4, 30)
+date_list = pd.date_range(start_date, end_date)
+collect_data(date_list, csv_filename)
+# print(get_seasonal_stats(2019))
