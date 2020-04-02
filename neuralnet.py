@@ -16,7 +16,7 @@ def train(train_csv_filename):
     Y = train_dataset[:, 1]
 
     model = Sequential()
-    model.add(Dense(64, input_dim=546, activation='tanh', kernel_constraint=maxnorm(3)))
+    model.add(Dense(64, input_dim=546, activation='relu', kernel_constraint=maxnorm(3)))
     model.add(Dropout(0.1))
     model.add(Dense(16, activation='relu', kernel_constraint=maxnorm(3)))
     model.add(Dropout(0.1))
@@ -75,7 +75,7 @@ def read_csv_file(filename):
 stats_excluded = 0
 neural_net = train("training_data.csv")
 test(neural_net, "testing_data.csv")
-predict(neural_net, "predict_data.csv")
+# predict(neural_net, "predict_data.csv")
 # neural_net.save_weights("model_weights.h5")
 
 # print(model.predict(x))

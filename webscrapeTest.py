@@ -304,9 +304,9 @@ def collect_data(date_range, filename):
                 raise
 
 
-csv_filename = "14-15_data.csv"
-start_date = datetime.datetime(2014, 10, 20)
-end_date = datetime.datetime(2015, 4, 30)
+csv_filename = "13-14_data.csv"
+start_date = datetime.datetime(2013, 10, 15)
+end_date = datetime.datetime(2014, 4, 30)
 date_list = pd.date_range(start_date, end_date)
 collect_data(date_list, csv_filename)
 # print(get_seasonal_stats(2019))
