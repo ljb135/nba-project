@@ -6,6 +6,7 @@ from keras.layers import Dense
 from keras.layers import Dropout
 from keras.constraints import maxnorm
 import csv
+import matplotlib.pyplot as plt
 
 
 def train(train_csv_filename):
@@ -16,6 +17,10 @@ def train(train_csv_filename):
     Y = train_dataset[:, 1]
 
     model = Sequential()
+    # model.add(Dense(84, input_dim=546, activation='relu'))
+    # model.add(Dense(16, activation='relu'))
+    # model.add(Dense(4, activation='relu'))
+    # model.add(Dense(1, activation='sigmoid'))
     model.add(Dense(64, input_dim=546, activation='relu', kernel_constraint=maxnorm(3)))
     model.add(Dropout(0.1))
     model.add(Dense(16, activation='relu', kernel_constraint=maxnorm(3)))
@@ -24,7 +29,54 @@ def train(train_csv_filename):
 
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    model.fit(X, Y, epochs=600, batch_size=250)
+    model.fit(X, Y, epochs=400, batch_size=64)
+    return model
+
+
+def analyze_train(train_csv_filename, test_csv_filename):
+    train_dataset = loadtxt(train_csv_filename, delimiter=',')
+    test_dataset = loadtxt(test_csv_filename, delimiter=',')
+
+    # split into input (X) and output (Y) variables
+    X = train_dataset[:, 2:]
+    Y = train_dataset[:, 1]
+    x = test_dataset[:, 2:]
+    y = test_dataset[:, 1]
+
+    model = Sequential()
+    # model.add(Dense(64, input_dim=546, activation='relu', kernel_constraint=maxnorm(3)))
+    # model.add(Dropout(0.1))
+    # model.add(Dense(16, activation='relu', kernel_constraint=maxnorm(3)))
+    # model.add(Dropout(0.1))
+    # model.add(Dense(1, activation='sigmoid'))
+    model.add(Dense(64, input_dim=546, activation='relu'))
+    model.add(Dense(16, activation='relu'))
+    model.add(Dense(1, activation='sigmoid'))
+
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+    history = model.fit(X, Y, epochs=500, batch_size=128, validation_data=(x, y))
+
+    # # list all data in history
+    # print(history.history.keys())
+    # # summarize history for accuracy
+    # plt.plot(history.history['accuracy'])
+    # plt.plot(history.history['val_accuracy'])
+    # plt.title('model accuracy')
+    # plt.ylabel('accuracy')
+    # plt.xlabel('epoch')
+    # plt.legend(['train', 'test'], loc='upper left')
+    # plt.show()
+
+    # summarize history for loss
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('model loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    plt.show()
+
     return model
 
 
@@ -72,18 +124,17 @@ def read_csv_file(filename):
     return data_matrix
 
 
-stats_excluded = 0
-neural_net = train("training_data.csv")
+neural_net = analyze_train("training_data.csv", "testing_data.csv")
 test(neural_net, "testing_data.csv")
+# stats_excluded = 0
+# neural_net = train("training_data.csv")
+# test(neural_net, "testing_data.csv")
 # predict(neural_net, "predict_data.csv")
 # neural_net.save_weights("model_weights.h5")
 
 # print(model.predict(x))
 # weights = model.get_weights()
 # print(weights)
-
-
-
 # _, accuracy = model.evaluate(x, y)
 # print('Accuracy: %.2f' % (accuracy*100))
 # validation_data=(x, y)
