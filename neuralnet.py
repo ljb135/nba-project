@@ -38,37 +38,39 @@ def analyze_train(train_csv_filename, test_csv_filename):
     test_dataset = loadtxt(test_csv_filename, delimiter=',')
 
     # split into input (X) and output (Y) variables
-    X = train_dataset[:, 2:]
-    Y = train_dataset[:, 1]
-    x = test_dataset[:, 2:]
-    y = test_dataset[:, 1]
+    x_train = train_dataset[:, 2:]
+    y_train = train_dataset[:, 1]
+
+    x_test = test_dataset[:, 2:]
+    y_test = test_dataset[:, 1]
 
     model = Sequential()
-    # model.add(Dense(64, input_dim=546, activation='relu', kernel_constraint=maxnorm(3)))
+    model.add(Dense(256, input_dim=546, activation='relu', kernel_constraint=maxnorm(3)))
+    model.add(Dropout(0.25))
+    # model.add(Dense(64, activation='relu', kernel_constraint=maxnorm(3)))
     # model.add(Dropout(0.1))
-    # model.add(Dense(16, activation='relu', kernel_constraint=maxnorm(3)))
-    # model.add(Dropout(0.1))
-    # model.add(Dense(1, activation='sigmoid'))
-    model.add(Dense(64, input_dim=546, activation='relu'))
-    model.add(Dense(16, activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
+
+    # model.add(Dense(64, input_dim=546, activation='relu'))
+    # model.add(Dense(16, activation='relu'))
+    # model.add(Dense(1, activation='sigmoid'))
 
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    history = model.fit(X, Y, epochs=500, batch_size=128, validation_data=(x, y))
+    history = model.fit(x_train, y_train, epochs=50, batch_size=128, validation_data=(x_test, y_test), verbose=1)
+    print(model.evaluate(x_test, y_test))
 
-    # # list all data in history
-    # print(history.history.keys())
-    # # summarize history for accuracy
-    # plt.plot(history.history['accuracy'])
-    # plt.plot(history.history['val_accuracy'])
-    # plt.title('model accuracy')
-    # plt.ylabel('accuracy')
-    # plt.xlabel('epoch')
-    # plt.legend(['train', 'test'], loc='upper left')
-    # plt.show()
+    # graph training vs. validation accuracy over epochs
+    plt.figure(1)
+    plt.plot(history.history['accuracy'])
+    plt.plot(history.history['val_accuracy'])
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
 
-    # summarize history for loss
+    # graph training vs. validation loss over epochs
+    plt.figure(2)
     plt.plot(history.history['loss'])
     plt.plot(history.history['val_loss'])
     plt.title('model loss')
@@ -125,7 +127,7 @@ def read_csv_file(filename):
 
 
 neural_net = analyze_train("training_data.csv", "testing_data.csv")
-test(neural_net, "testing_data.csv")
+# test(neural_net, "testing_data.csv")
 # stats_excluded = 0
 # neural_net = train("training_data.csv")
 # test(neural_net, "testing_data.csv")
