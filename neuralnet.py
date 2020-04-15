@@ -13,8 +13,8 @@ def train(train_csv_filename):
     train_dataset = loadtxt(train_csv_filename, delimiter=',')
 
     # split into input (X) and output (Y) variables
-    X = train_dataset[:, 2:]
-    Y = train_dataset[:, 1]
+    x = train_dataset[:, 2:]
+    y = train_dataset[:, 1]
 
     model = Sequential()
     # model.add(Dense(84, input_dim=546, activation='relu'))
@@ -29,7 +29,7 @@ def train(train_csv_filename):
 
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    model.fit(X, Y, epochs=400, batch_size=64)
+    model.fit(x, y, epochs=400, batch_size=64)
     return model
 
 
