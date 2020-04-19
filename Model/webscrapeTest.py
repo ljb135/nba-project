@@ -304,7 +304,7 @@ def collect_data(date_range, filename):
                 raise
 
 
-csv_filename = "10-11_data.csv"
+csv_filename = "../Data/10-11_data.csv"
 start_date = datetime.datetime(2010, 10, 20)
 end_date = datetime.datetime(2011, 4, 20)
 date_list = pd.date_range(start_date, end_date)

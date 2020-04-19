@@ -1,10 +1,6 @@
 from numpy import *
 from pandas import *
 from keras.callbacks import EarlyStopping
-from keras.models import Sequential
-from keras.models import load_model
-from keras.layers import Dense
-from keras.layers import Dropout
 from keras.models import Model, Sequential, load_model
 from keras.layers import Dense, Input, Concatenate, Lambda, Dropout
 from keras.constraints import maxnorm
@@ -88,6 +84,53 @@ def analyze_train(train_csv_filename, test_csv_filename):
     return model
 
 
+def analyze_train_v2(train_csv_filename, test_csv_filename):
+    train_dataset = loadtxt(train_csv_filename, delimiter=',')
+    test_dataset = loadtxt(test_csv_filename, delimiter=',')
+
+    # split into input (X) and output (Y) variables
+    x_train = train_dataset[:, 2:]
+    y_train = train_dataset[:, 1]
+
+    x_test = test_dataset[:, 2:]
+    y_test = test_dataset[:, 1]
+
+    inputTensor = Input((546,))
+    group = []
+    for id in range(0, 21):
+        group.append(Lambda(lambda x: x[:, id:546:21], output_shape=((26,)))(inputTensor))
+        group[id] = Dropout(0.1)(Dense(1, activation='relu', kernel_constraint=maxnorm(3))(group[id]))
+    outputTensor = Concatenate()(group)
+    outputTensor = Dense(1, activation='sigmoid')(Dense(4, activation='relu', kernel_constraint=maxnorm(3))(outputTensor))
+    model = Model(inputTensor, outputTensor)
+
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+    history = model.fit(x_train, y_train, epochs=75, batch_size=128, validation_data=(x_test, y_test), verbose=1)
+    print(model.evaluate(x_test, y_test))
+
+    # graph training vs. validation accuracy over epochs
+    plt.figure(1)
+    plt.plot(history.history['accuracy'])
+    plt.plot(history.history['val_accuracy'])
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+
+    # graph training vs. validation loss over epochs
+    plt.figure(2)
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('model loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    plt.show()
+
+    return model
+
+
 def test(model, test_csv_filename):
     test_dataset = loadtxt(test_csv_filename, delimiter=',')
 
@@ -132,7 +175,7 @@ def read_csv_file(filename):
     return data_matrix
 
 
-neural_net = analyze_train("training_data.csv", "testing_data.csv")
+neural_net = analyze_train("../Data/training_data.csv", "Data/testing_data.csv")
 # test(neural_net, "testing_data.csv")
 # stats_excluded = 0
 # neural_net = train("training_data.csv")
