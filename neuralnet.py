@@ -5,8 +5,6 @@ from keras.models import Sequential
 from keras.models import load_model
 from keras.layers import Dense
 from keras.layers import Dropout
-from keras.models import Model, Sequential, load_model
-from keras.layers import Dense, Input, Concatenate, Lambda, Dropout
 from keras.constraints import maxnorm
 import csv
 import matplotlib.pyplot as plt
@@ -48,7 +46,7 @@ def analyze_train(train_csv_filename, test_csv_filename):
     y_test = test_dataset[:, 1]
 
     model = Sequential()
-    model.add(Dense(36, input_dim=546, activation='relu', kernel_constraint=maxnorm(3)))
+    model.add(Dense(32, input_dim=546, activation='relu', kernel_constraint=maxnorm(3)))
     model.add(Dropout(0.1))
     # model.add(Dense(4, activation='relu', kernel_constraint=maxnorm(3)))
     # model.add(Dropout(0.1))
