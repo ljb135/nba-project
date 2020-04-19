@@ -44,7 +44,7 @@ def analyze_train(train_csv_filename, test_csv_filename):
     y_test = test_dataset[:, 1]
 
     model = Sequential()
-    model.add(Dense(36, input_dim=546, activation='relu', kernel_constraint=maxnorm(3)))
+    model.add(Dense(32, input_dim=546, activation='relu', kernel_constraint=maxnorm(3)))
     model.add(Dropout(0.1))
     # model.add(Dense(4, activation='relu', kernel_constraint=maxnorm(3)))
     # model.add(Dropout(0.1))
