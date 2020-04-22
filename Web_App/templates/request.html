@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Statistical Analysis and Prediction of the NBA</title>
+  <link rel="stylesheet" href="main.css">
+
+</head>
+
+<body>
+  <div class="container">
+    <h1>
+      <center>Statistical Analysis and Prediction of the NBA</center>
+    </h1>
+    {% block content %}
+    <form method="POST" action="/">
+      {% for player in form.home %}
+      <div class="form-field">{{ player.label }} {{ player }}</div>
+      {% endfor %}
+      {% for player in form.away %}
+      <div class="form-field">{{ player.label }} {{ player }}</div>
+      {% endfor %}
+      <div class="form_field">{{ form.email.label }} {{ form.email }}</div>
+      {{ form.submit }}
+    </form>
+
+    {% endblock %}
+
+  </div>
+</body>
+
+</html>
