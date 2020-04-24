@@ -17,4 +17,4 @@ def contact():
     return render_template('request.html', form=form)
 
 
-app.run(host='0.0.0.0', port=50000)
+app.run(host='0.0.0.0', port=50000, debug=True)
