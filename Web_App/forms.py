@@ -1,11 +1,16 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextField, SubmitField
+from wtforms import StringField, TextField, SubmitField, SelectField
 from wtforms.validators import DataRequired, Length
 
 
 class PlayerSelectionForm(FlaskForm):
     """User entry form for entering players on home/away teams"""
     # Home Team Players
+    year_options = []
+    for i in range(1990, 2020):
+        year_options.append((i, f"{i}-{i + 1}"))
+
+    home_year_1 = SelectField(validators=[DataRequired()], choices=year_options)
     home_1 = StringField('Home Player 1', validators=[DataRequired()])
     home_2 = StringField('Home Player 2', validators=[DataRequired()])
     home_3 = StringField('Home Player 3', validators=[DataRequired()])
