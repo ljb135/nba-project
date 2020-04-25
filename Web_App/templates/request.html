@@ -1,13 +1,5 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-  <title>Statistical Analysis and Prediction of the NBA</title>
-  <link rel="stylesheet" href="/static/main.css">
-
-</head>
-
-<body>
+{%  extends "layout.html" %}
+{% block body %}
   <div class="container">
     <h1>
       <center>Statistical Analysis and Prediction of the NBA</center>
@@ -15,13 +7,11 @@
     {% block content %}
     <form method="POST" action="/">
       {% for field in form %}
-      <div class="form-field">{{ field.label }} {{ field }}</div>
+      <div class="form-field">
+        {{ field.label }} {{ field }}
+      </div>
       {% endfor %}
     </form>
-
-    {% endblock %}
-
+    {% endblock content %}
   </div>
-</body>
-
-</html>
+{% endblock body %}
