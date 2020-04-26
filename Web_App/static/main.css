@@ -47,8 +47,8 @@ body {
 
 
   h1 {
-    font-family: none;
-    color: darkslategray;
+    font-family: 'Roboto', sans-serif;
+    color: black;
     display: block;
     font-size: 48px;
     margin-top: 8px;
