@@ -8,7 +8,7 @@ class PlayerSelectionForm(FlaskForm):
     # Home Team Players
     year_options = []
     for i in range(1990, 2020):
-        year_options.append((i, f"{i}-{i + 1}"))
+        year_options.append((str(i), f"{i}-{i + 1}"))
 
     home_year_1 = SelectField(validators=[DataRequired()], choices=year_options)
     home_1 = StringField('1)', validators=[DataRequired()])
