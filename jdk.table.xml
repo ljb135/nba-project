@@ -1,0 +1,134 @@
+<application>
+  <component name="ProjectJdkTable">
+    <jdk version="2">
+      <name value="Python 3.7 (NeuralNet)" />
+      <type value="Python SDK" />
+      <version value="Python 3.7.3" />
+      <homePath value="C:\ProgramData\Miniconda3\envs\NeuralNet\python.exe" />
+      <roots>
+        <classPath>
+          <root type="composite">
+            <root url="file://C:/ProgramData/Miniconda3/envs/NeuralNet/DLLs" type="simple" />
+            <root url="file://C:/ProgramData/Miniconda3/envs/NeuralNet/Lib" type="simple" />
+            <root url="file://C:/ProgramData/Miniconda3/envs/NeuralNet/Lib/site-packages" type="simple" />
+            <root url="file://$USER_HOME$/.PyCharmCE2019.1/system/python_stubs/-1979371665" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/python-skeletons" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/2and3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/third_party/3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/third_party/2and3" type="simple" />
+          </root>
+        </classPath>
+        <sourcePath>
+          <root type="composite" />
+        </sourcePath>
+      </roots>
+      <additional ASSOCIATED_PROJECT_PATH="$USER_HOME$/Documents/CompSci/Python/NeuralNet" />
+    </jdk>
+    <jdk version="2">
+      <name value="Python 3.8" />
+      <type value="Python SDK" />
+      <version value="Python 3.8.0" />
+      <homePath value="C:\Users\chris\AppData\Local\Programs\Python\Python38\python.exe" />
+      <roots>
+        <classPath>
+          <root type="composite">
+            <root url="file://$USER_HOME$/AppData/Local/Programs/Python/Python38/DLLs" type="simple" />
+            <root url="file://$USER_HOME$/AppData/Local/Programs/Python/Python38/Lib" type="simple" />
+            <root url="file://$USER_HOME$/AppData/Local/Programs/Python/Python38" type="simple" />
+            <root url="file://$USER_HOME$/AppData/Local/Programs/Python/Python38/Lib/site-packages" type="simple" />
+            <root url="file://$USER_HOME$/.PyCharmCE2019.1/system/python_stubs/-1320828548" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/python-skeletons" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/2and3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/third_party/3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/third_party/2and3" type="simple" />
+          </root>
+        </classPath>
+        <sourcePath>
+          <root type="composite" />
+        </sourcePath>
+      </roots>
+      <additional />
+    </jdk>
+    <jdk version="2">
+      <name value="Python 3.7" />
+      <type value="Python SDK" />
+      <version value="Python 3.7.3" />
+      <homePath value="C:\ProgramData\Miniconda3\python.exe" />
+      <roots>
+        <classPath>
+          <root type="composite">
+            <root url="file://C:/ProgramData/Miniconda3/DLLs" type="simple" />
+            <root url="file://C:/ProgramData/Miniconda3/Lib" type="simple" />
+            <root url="file://C:/ProgramData/Miniconda3/Lib/site-packages" type="simple" />
+            <root url="file://C:/ProgramData/Miniconda3/Lib/site-packages/win32" type="simple" />
+            <root url="file://C:/ProgramData/Miniconda3/Lib/site-packages/win32/lib" type="simple" />
+            <root url="file://C:/ProgramData/Miniconda3/Lib/site-packages/pythonwin" type="simple" />
+            <root url="file://$USER_HOME$/.PyCharmCE2019.3/system/python_stubs/152262123" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/plugins/python-ce/helpers/python-skeletons" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/plugins/python-ce/helpers/typeshed/stdlib/3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/plugins/python-ce/helpers/typeshed/stdlib/2and3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/plugins/python-ce/helpers/typeshed/third_party/3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/plugins/python-ce/helpers/typeshed/third_party/2and3" type="simple" />
+          </root>
+        </classPath>
+        <sourcePath>
+          <root type="composite" />
+        </sourcePath>
+      </roots>
+      <additional />
+    </jdk>
+    <jdk version="2">
+      <name value="Python 3.7 (Contracts)" />
+      <type value="Python SDK" />
+      <version value="Python 3.7.6" />
+      <homePath value="C:\ProgramData\Miniconda3\envs\Contracts\python.exe" />
+      <roots>
+        <classPath>
+          <root type="composite">
+            <root url="file://C:/ProgramData/Miniconda3/envs/Contracts/DLLs" type="simple" />
+            <root url="file://C:/ProgramData/Miniconda3/envs/Contracts/Lib" type="simple" />
+            <root url="file://C:/ProgramData/Miniconda3/envs/Contracts/Lib/site-packages" type="simple" />
+            <root url="file://$USER_HOME$/.PyCharmCE2019.1/system/python_stubs/2004797772" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/python-skeletons" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/2and3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/third_party/3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/third_party/2and3" type="simple" />
+          </root>
+        </classPath>
+        <sourcePath>
+          <root type="composite" />
+        </sourcePath>
+      </roots>
+      <additional ASSOCIATED_PROJECT_PATH="$USER_HOME$/Documents/School and Professional/Contracts" />
+    </jdk>
+    <jdk version="2">
+      <name value="Python 3.7 (NBAWebScrape)" />
+      <type value="Python SDK" />
+      <version value="Python 3.7.6" />
+      <homePath value="C:\ProgramData\Miniconda3\envs\NBAWebScrape\python.exe" />
+      <roots>
+        <classPath>
+          <root type="composite">
+            <root url="file://C:/ProgramData/Miniconda3/envs/NBAWebScrape/DLLs" type="simple" />
+            <root url="file://C:/ProgramData/Miniconda3/envs/NBAWebScrape/Lib" type="simple" />
+            <root url="file://C:/ProgramData/Miniconda3/envs/NBAWebScrape/Lib/site-packages" type="simple" />
+            <root url="file://$USER_HOME$/AppData/Local/JetBrains/PyCharmCE2020.1/python_stubs/537728310" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/plugins/python-ce/helpers/python-skeletons" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/plugins/python-ce/helpers/typeshed/stdlib/3.7" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/plugins/python-ce/helpers/typeshed/stdlib/3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/plugins/python-ce/helpers/typeshed/stdlib/2and3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/plugins/python-ce/helpers/typeshed/third_party/3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/plugins/python-ce/helpers/typeshed/third_party/2and3" type="simple" />
+          </root>
+        </classPath>
+        <sourcePath>
+          <root type="composite" />
+        </sourcePath>
+      </roots>
+      <additional ASSOCIATED_PROJECT_PATH="$USER_HOME$/Documents/CompSci/Python/NBAWebScrape" />
+    </jdk>
+  </component>
+</application>
