@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData, ForeignKey
 
-db = create_engine('sqlite:///C:\\Users\\anshu\\PycharmProjects\\NBA-Project\\NBAPlayers.db', echo=True)
+db = create_engine('sqlite:///NBAPlayers.db', echo=True)
 meta = MetaData()
 
 players = Table('players', meta,

@@ -11,7 +11,7 @@ meta = MetaData()
 players = Table('players', meta,
     Column('NAME', String),
     Column('PLAYER_ID', String, primary_key=True),
-    Column('YEAR', String),
+    Column('YEAR', String, primary_key=True),
     Column('AGE', Integer),
     Column('HEIGHT', Integer),
     Column('WEIGHT', Integer),
@@ -34,6 +34,7 @@ players = Table('players', meta,
     Column('EFG_PERCENTAGE', Integer),
     Column('TS_PERCENTAGE', Integer)
 )
+meta.create_all(db)
 
 
 # gathers seasonal stats for all players during a specified season
@@ -79,6 +80,8 @@ def get_seasonal_stats(season):
         try:
             season_stats[player_name] = season_stats[player_name] + player
         except Exception:
+            if player_name in season_stats:
+                del season_stats[player_name]
             continue
 
     param = f"{season}-{str((season + 1) % 100).zfill(2)}"
@@ -97,18 +100,19 @@ def get_seasonal_stats(season):
         player_name = str(player[1])
         del player[8:]
         del player[0: 6]
-        player[1] = int(player[1])
         try:
+            player[1] = int(player[1])
             season_stats[player_name] = season_stats[player_name] + player
         except Exception:
+            if player_name in season_stats:
+                del season_stats[player_name]
             continue
     return season_stats
 
 
-for year in range(1990, 2020):
+for year in range(1996, 2020):
     print(f"starting {year}")
     player_stats = get_seasonal_stats(year)
-    print("finish webscraping")
     for player in player_stats:
         stats = player_stats[player]
         query = players.insert().values(
