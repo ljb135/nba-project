@@ -1,12 +1,39 @@
 import urllib.request
 from urllib.error import HTTPError
-import datetime
 import gzip
 import json
-import csv
 import re
-import pandas as pd
-import pyrebase
+from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData, ForeignKey
+
+db = create_engine('sqlite:///C:\\Users\\anshu\\PycharmProjects\\NBA-Project\\NBAPlayers.db', echo=True)
+meta = MetaData()
+
+players = Table('players', meta,
+    Column('NAME', String),
+    Column('PLAYER_ID', String, primary_key=True),
+    Column('YEAR', String),
+    Column('AGE', Integer),
+    Column('HEIGHT', Integer),
+    Column('WEIGHT', Integer),
+    Column('MIN', Integer),
+    Column('PTS', Integer),
+    Column('FGM', Integer),
+    Column('FG_PERCENTAGE', Integer),
+    Column('THREE_PM', Integer),
+    Column('THREE_P_PERCENTAGE', Integer),
+    Column('FTM', Integer),
+    Column('FT_PERCENTAGE', Integer),
+    Column('OREB', Integer),
+    Column('DREB', Integer),
+    Column('AST', Integer),
+    Column('TOV', Integer),
+    Column('STL', Integer),
+    Column('BLK', Integer),
+    Column('PF', Integer),
+    Column('PLUS_MINUS', Integer),
+    Column('EFG_PERCENTAGE', Integer),
+    Column('TS_PERCENTAGE', Integer)
+)
 
 
 # gathers seasonal stats for all players during a specified season
@@ -24,9 +51,12 @@ def get_seasonal_stats(season):
     season_stats = {}
     for player in json_file["resultSets"][0]["rowSet"]:
         player_name = str(player[1])
-        del player[0: 4]
-        del player[30:]
-        season_stats[player_name] = player
+        del player[31:]
+        delete_indexes = [2, 3, 5, 6, 7, 8, 11, 14, 17, 21, 26, 28]
+        for index in sorted(delete_indexes, reverse=True):
+            del player[index]
+        player[0] = str(player[0])
+        season_stats[player_name] = [str(season)] + player
 
     param = f"{season}-{season % 100 + 1}"
     season_stats_url = f"https://stats.nba.com/stats/leaguedashplayerstats?College=&Conference=&Country=&DateFrom=&DateTo=&Division=&DraftPick=&DraftYear=&GameScope=&GameSegment=&Height=&LastNGames=0&LeagueID=00&Location=&MeasureType=Advanced&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerExperience=&PlayerPosition=&PlusMinus=N&Rank=N&Season={param}&SeasonSegment=&SeasonType=Regular+Season&ShotClockRange=&StarterBench=&TeamID=0&TwoWay=0&VsConference=&VsDivision=&Weight="
@@ -40,8 +70,8 @@ def get_seasonal_stats(season):
 
     for player in json_file["resultSets"][0]["rowSet"]:
         player_name = str(player[1])
-        del player[0: 10]
-        del player[32:]
+        del player[29:]
+        del player[0: 27]
         season_stats[player_name] = season_stats[player_name] + player
 
     param = f"{season}-{season % 100 + 1}"
@@ -56,8 +86,42 @@ def get_seasonal_stats(season):
 
     for player in json_file["resultSets"][0]["rowSet"]:
         player_name = str(player[1])
-        del player[0: 5]
+        del player[8:]
+        del player[0: 6]
+        player[1] = int(player[1])
         season_stats[player_name] = season_stats[player_name] + player
 
     return season_stats
 
+
+# print(json.dumps(get_seasonal_stats(2019), indent=4))
+player_stats = get_seasonal_stats(2019)
+
+for player in player_stats:
+    stats = player_stats[player]
+    query = players.insert().values(
+        NAME=stats[2],
+        PLAYER_ID=stats[1],
+        YEAR=stats[0],
+        AGE=stats[3],
+        HEIGHT=stats[22],
+        WEIGHT=stats[23],
+        MIN=stats[4],
+        PTS=stats[18],
+        FGM=stats[5],
+        FG_PERCENTAGE=stats[6],
+        THREE_PM=stats[7],
+        THREE_P_PERCENTAGE=stats[8],
+        FTM=stats[9],
+        FT_PERCENTAGE=stats[10],
+        OREB=stats[11],
+        DREB=stats[12],
+        AST=stats[13],
+        TOV=stats[14],
+        STL=stats[15],
+        BLK=stats[16],
+        PF=stats[17],
+        PLUS_MINUS=stats[19],
+        EFG_PERCENTAGE=stats[20],
+        TS_PERCENTAGE=stats[21],
+    )

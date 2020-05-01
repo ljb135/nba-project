@@ -33,7 +33,7 @@ def prediction():
     return render_template('result.html', title='Prediction')
 
 
-@app.route('/playerlist', methods=('GET', 'POST'))
+@app.route('/playerlist')
 def playerlist():
     return render_template('playerlist.html', title='Player List')
 
