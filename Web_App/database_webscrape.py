@@ -94,34 +94,35 @@ def get_seasonal_stats(season):
     return season_stats
 
 
-# print(json.dumps(get_seasonal_stats(2019), indent=4))
-player_stats = get_seasonal_stats(2019)
-
-for player in player_stats:
-    stats = player_stats[player]
-    query = players.insert().values(
-        NAME=stats[2],
-        PLAYER_ID=stats[1],
-        YEAR=stats[0],
-        AGE=stats[3],
-        HEIGHT=stats[22],
-        WEIGHT=stats[23],
-        MIN=stats[4],
-        PTS=stats[18],
-        FGM=stats[5],
-        FG_PERCENTAGE=stats[6],
-        THREE_PM=stats[7],
-        THREE_P_PERCENTAGE=stats[8],
-        FTM=stats[9],
-        FT_PERCENTAGE=stats[10],
-        OREB=stats[11],
-        DREB=stats[12],
-        AST=stats[13],
-        TOV=stats[14],
-        STL=stats[15],
-        BLK=stats[16],
-        PF=stats[17],
-        PLUS_MINUS=stats[19],
-        EFG_PERCENTAGE=stats[20],
-        TS_PERCENTAGE=stats[21],
-    )
+for year in range(1990, 2019):
+    player_stats = get_seasonal_stats(year)
+    for player in player_stats:
+        stats = player_stats[player]
+        query = players.insert().values(
+            NAME=stats[2],
+            PLAYER_ID=stats[1],
+            YEAR=stats[0],
+            AGE=stats[3],
+            HEIGHT=stats[22],
+            WEIGHT=stats[23],
+            MIN=stats[4],
+            PTS=stats[18],
+            FGM=stats[5],
+            FG_PERCENTAGE=stats[6],
+            THREE_PM=stats[7],
+            THREE_P_PERCENTAGE=stats[8],
+            FTM=stats[9],
+            FT_PERCENTAGE=stats[10],
+            OREB=stats[11],
+            DREB=stats[12],
+            AST=stats[13],
+            TOV=stats[14],
+            STL=stats[15],
+            BLK=stats[16],
+            PF=stats[17],
+            PLUS_MINUS=stats[19],
+            EFG_PERCENTAGE=stats[20],
+            TS_PERCENTAGE=stats[21],
+        )
+        conn = db.connect()
+        result = conn.execute(query)
