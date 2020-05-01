@@ -1,4 +1,3 @@
-# import stuff
 from keras.models import load_model
 from numpy import *
 
