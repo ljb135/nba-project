@@ -6,7 +6,7 @@
   body {
     margin: 0;
     padding: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: 'Raleway', serif;
     color: #444;
     background-image: url("https://wallpaperaccess.com/full/103114.jpg");
     min-height: 100%;
@@ -34,7 +34,7 @@
 
   .container {
     text-align: center;
-    background-color: ivory;
+    background-color: MintCream;
     max-width: 940px;
     width: 85%;
     height: auto;
@@ -71,15 +71,15 @@
 
 
   h1 {
-    font-family: 'Raleway', serif;
-    font-weight: normal;
+    font-family: 'Raleway', sans-serif;
+    font-weight: light;
     display: block;
     font-size: 60px;
     margin: auto;
   }
 
   h2 {
-    font-family: 'Old Standard', serif;
+    font-family: 'Raleway', serif;
     font-weight: normal;
     display: block;
     font-size: 25px;
@@ -88,7 +88,7 @@
   }
 
   h3 {
-    font-family: 'Verdana', sans-serif;
+    font-family: 'Raleway', serif;
     font-weight: normal;
     display: block;
     font-size: 20px;
@@ -98,7 +98,7 @@
   }
 
   h4 {
-    font-family: 'Times New Roman', serif;
+    font-family: 'Raleway', serif;
     font-weight: normal;
     display: inline;
     font-size: 18px;
@@ -112,6 +112,18 @@
     padding: 0;
     overflow: hidden;
     background-color: #333;
+}
+
+select {
+    width: 150px;
+    font-family: 'Raleway', serif;
+    font-size: 15px;
+}
+
+input {
+    font-family: 'Raleway', serif;
+    text-align: center
+    background-color: white
 }
 
 li {
@@ -217,6 +229,6 @@ form input#submit:hover{
   }
 
   .partialform {
-    text-align: left;
-    margin-left: 100px;
+    text-align: right;
+    margin-right: 70px;
   }

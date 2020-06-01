@@ -9,12 +9,13 @@
 </div>
 
 <form method="POST">
+  {{ form.hidden_tag() }}
   <div class="form">
     <div class="column">
       <h3><u><b>Home Team</b></u></h3>
       <div class = "partialform">
         {% for player in form.home_players %}
-          <h3>{{ loop.index }} {{ player.year }} {{ player.player_name }}</h3>
+        <h3><b>{{ loop.index }}.</b> {{ player.year }} {{ player.player_name }}</h3>
         {% endfor %}
       </div>
     </div>
@@ -23,7 +24,7 @@
       <h3><u><b>Away Team</b></u></h3>
       <div class = "partialform">
         {% for player in form.away_players %}
-          <h3>{{ loop.index }} {{ player.year }} {{ player.player_name }}</h3>
+        <h3><b>{{ loop.index }}.</b> {{ player.year }} {{ player.player_name }}</h3>
         {% endfor %}
       </div>
     </div>
@@ -31,7 +32,9 @@
     <div class = "row">
       {{ form.submit }}
     </div>
-
+    {% if form.errors %}
+      {{form.errors}}
+    {% endif %}
   </div>
 </form>
 
