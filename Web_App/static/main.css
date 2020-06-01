@@ -179,17 +179,16 @@ form textarea#message {
 }
 
 form input#submit {
-  height:40px;
-  width:100px;
-  margin: auto;
-  margin-bottom: 15px;
+  height: auto;
+  width: auto;
+  margin: auto auto 10px auto;
+  padding: 10px;
   display: -webkit-box;
   -webkit-border-radius: 3px;
      -moz-border-radius: 3px;
           border-radius: 3px;
-  border:1px solid #d8d8d8;
-  padding: 10px;
-  font-weight:bold;
+  border: 1px solid #d8d8d8;
+  font-weight: bold;
   font-size:22px;
   text-align: center;
   color: #000000;
