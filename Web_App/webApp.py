@@ -1,4 +1,4 @@
-from flask import Flask, url_for, render_template, redirect, jsonify
+from flask import Flask, url_for, render_template, redirect, jsonify, request
 from forms import PlayerForm, PlayerSelectionForm
 import os
 from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData, select
@@ -51,7 +51,9 @@ def homepage():
     for player in form.away_players:
         player.player_name.choices = player_choices
 
-    if form.validate_on_submit():
+    if request.method == "POST":
+        print(form.home_players.data)
+        print(form.away_players.data)
         # home_team_players = {}
         # for i in range(1, 14):
         #     year_label = "home_year_" + str(i)
@@ -63,6 +65,8 @@ def homepage():
         #     name_label = "away_" + str(i)
         #     away_team_players[i] = [request.form[year_label], request.form[name_label]]
         return redirect(url_for('prediction'))
+    else:
+        print(form.errors)
     return render_template('request.html', form=form, title='Home')
 
 
@@ -85,7 +89,7 @@ def update(year):
         playerObj["player_id"] = player.PLAYER_ID
         player_array.append(playerObj)
 
-    return jsonify({"players" : player_array})
+    return jsonify({"players": player_array})
 
 
 if __name__ == '__main__':

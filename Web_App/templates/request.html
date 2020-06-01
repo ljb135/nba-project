@@ -8,7 +8,8 @@
   </h2>
 </div>
 
-<form method="POST">
+<form method="POST" action="">
+  {{ form.hidden_tag() }}
   <div class="form">
     <div class="column">
       <h3><u><b>Home Team</b></u></h3>
@@ -28,11 +29,15 @@
       </div>
     </div>
 
+<!--    <input type = "submit">-->
     <div class = "row">
       {{ form.submit }}
     </div>
 
   </div>
+  {% if form.errors %}
+    {{ form.errors }}
+  {% endif %}
 </form>
 
 <script>
@@ -47,7 +52,7 @@
         response.json().then(function(data){
           let optionHTML = '';
           for(let player of data.players){
-            optionHTML += '<option value="' + player.player_id + '">' + player.name + '</option>';
+            optionHTML += "<option value=" + player.player_id.toString() + ">" + player.name.toString() + "</option>";
           }
           name_select.innerHTML = optionHTML;
         });
