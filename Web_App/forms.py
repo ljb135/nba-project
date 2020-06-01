@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextField, SubmitField, SelectField, Form, FormField
+from wtforms import StringField, TextField, SubmitField, SelectField, Form, FormField, FieldList
 from wtforms.validators import InputRequired, Length
 
 
@@ -74,26 +74,16 @@ from wtforms.validators import InputRequired, Length
 # Form for a single player to be duplicated
 class PlayerForm(FlaskForm):
     year_options = [("Empty", "Empty")]
-    for i in range(1990, 2020):
+    for i in range(1996, 2020):
         year_options.append((str(i), f"{i}-{i + 1}"))
 
     year = SelectField('Year', validators=[InputRequired()], choices=year_options, default="Empty")
     player_name = SelectField('Player Name', validators=[InputRequired()], choices=[])
 
-    submit = SubmitField('Predict')
 
 # User entry form for entering players on home/away teams
-class PlayerSelectionForm(Form):
-    home_1 = SelectField('1)', validators=[InputRequired()], choices=[])
-    home_2 = SelectField('2)', validators=[InputRequired()], choices=[])
-    home_3 = SelectField('3)', validators=[InputRequired()], choices=[])
-    home_4 = SelectField('4)', validators=[InputRequired()], choices=[])
-    home_5 = SelectField('5)', validators=[InputRequired()], choices=[])
-    home_6 = SelectField('6)', choices=[])
-    home_7 = SelectField('7)', choices=[])
-    home_8 = SelectField('8)', choices=[])
-    home_9 = SelectField('9)', choices=[])
-    home_10 = SelectField('10)', choices=[])
-    home_11 = SelectField('11)', choices=[])
-    home_12 = SelectField('12)', choices=[])
-    home_13 = SelectField('13)', choices=[])
+class PlayerSelectionForm(FlaskForm):
+    home_players = FieldList(FormField(PlayerForm), validators=[InputRequired()], min_entries=5)
+    away_players = FieldList(FormField(PlayerForm), validators=[InputRequired()], min_entries=5)
+
+    submit = SubmitField('Predict')

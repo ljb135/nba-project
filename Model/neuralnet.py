@@ -175,7 +175,7 @@ def read_csv_file(filename):
     return data_matrix
 
 
-neural_net = analyze_train("Data/training_data.csv", "Data/testing_data.csv")
+neural_net = analyze_train("../Data/training_data.csv", "../Data/testing_data.csv")
 # test(neural_net, "testing_data.csv")
 # stats_excluded = 0
 # neural_net = train("training_data.csv")
