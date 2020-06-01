@@ -72,7 +72,7 @@ from wtforms.validators import InputRequired, Length
 #     submit = SubmitField('Predict')
 
 # Form for a single player to be duplicated
-class PlayerForm(FlaskForm):
+class PlayerForm(Form):
     year_options = [("Empty", "Empty")]
     for i in range(1996, 2020):
         year_options.append((str(i), f"{i}-{i + 1}"))
@@ -83,7 +83,7 @@ class PlayerForm(FlaskForm):
 
 # User entry form for entering players on home/away teams
 class PlayerSelectionForm(FlaskForm):
-    home_players = FieldList(FormField(PlayerForm), validators=[InputRequired()], min_entries=5)
-    away_players = FieldList(FormField(PlayerForm), validators=[InputRequired()], min_entries=5)
+    home_players = FieldList(FormField(PlayerForm), validators=[InputRequired()], min_entries=13, max_entries=13)
+    away_players = FieldList(FormField(PlayerForm), validators=[InputRequired()], min_entries=13, max_entries=13)
 
     submit = SubmitField('Predict')

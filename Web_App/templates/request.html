@@ -15,7 +15,7 @@
         <u><b>Home Team</b></u>
       </h3>
       {% for player in form.home_players %}
-      <h3>{{ player.year }} {{ player.player_name }}</h3>
+        <h3>{{ loop.index }} {{ player.year }} {{ player.player_name }}</h3>
       {% endfor %}
     </div>
 
@@ -24,28 +24,36 @@
         <u><b>Away Team</b></u>
       </h3>
       {% for player in form.away_players %}
-      <h3>{{ player.year }} {{ player.player_name }}</h3>
+        <h3>{{ loop.index }} {{ player.year }} {{ player.player_name }}</h3>
       {% endfor %}
     </div>
-    {{ form.submit }}
+
+    <div class = "row">
+      {{ form.submit }}
+    </div>
+
   </div>
 </form>
 
+<!--run for each of the 26 forms (when we create them-->
 <script>
-  let year_select = document.getElementById("year");
-  let name_select = document.getElementById("player_name");
+  function playerlist_update(year_field, name_field){
+    let year_select = document.getElementById("year_field");
+    let name_select = document.getElementById("name_field");
 
-  year_select.onchange = function(){
-    year = year_select.value;
-    fetch("/update/" + year).then(function(response){
-      response.json().then(function(data){
-        let optionHTML = '';
-        for(let player of data.players){
-          optionHTML += '<option value="' + player.player_id + '">' + player.name + '</option>';
-        }
-        name_select.innerHTML = optionHTML;
+    year_select.onchange = function(){
+      year = year_select.value;
+      fetch("/update/" + year).then(function(response){
+        response.json().then(function(data){
+          let optionHTML = '';
+          for(let player of data.players){
+            optionHTML += '<option value="' + player.player_id + '">' + player.name + '</option>';
+          }
+          name_select.innerHTML = optionHTML;
+        });
       });
-    });
+    }
   }
+
 </script>
 {% endblock content %}

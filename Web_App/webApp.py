@@ -44,15 +44,15 @@ players = Table('players', meta,
 @app.route('/', methods=('GET', 'POST'))
 def homepage():
     form = PlayerSelectionForm()
-    query = select([players.c.PLAYER_ID, players.c.NAME]).where(players.c.YEAR == 2007)
-    conn = db.connect()
-    result = conn.execute(query)
+    # query = select([players.c.PLAYER_ID, players.c.NAME]).where(players.c.YEAR == 2007)
+    # conn = db.connect()
+    # result = conn.execute(query)
 
-    form.home_players.append_entry(PlayerForm)
+    # form.home_players.append_entry(PlayerForm)
 
     player_choices = [("Empty", "Empty")]
-    for player in result:
-        player_choices.append((player.PLAYER_ID, player.NAME))
+    # for player in result:
+    #     player_choices.append((player.PLAYER_ID, player.NAME))
     for player in form.home_players:
         player.player_name.choices = player_choices
     for player in form.away_players:

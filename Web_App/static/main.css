@@ -27,6 +27,11 @@
     padding: 30px;
   }
 
+  .submit {
+    text-align: center;
+    padding: 10px;
+  }
+
   .container {
     text-align: center;
     background-color: ivory;
