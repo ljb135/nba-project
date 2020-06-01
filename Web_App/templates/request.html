@@ -12,7 +12,7 @@
   <div class="form">
     <div class="column">
       <h3>
-        <u><b>Home Team</b></u>
+        <center><u><b>Home Team</b></u></center>
       </h3>
       {% for player in form.home_players %}
         <h3>{{ loop.index }} {{ player.year }} {{ player.player_name }}</h3>
@@ -21,7 +21,7 @@
 
     <div class="column">
       <h3>
-        <u><b>Away Team</b></u>
+        <center><u><b>Away Team</b></u></center>
       </h3>
       {% for player in form.away_players %}
         <h3>{{ loop.index }} {{ player.year }} {{ player.player_name }}</h3>
@@ -37,9 +37,10 @@
 
 <!--run for each of the 26 forms (when we create them-->
 <script>
+  console.log("is this what hell is like?")
   function playerlist_update(year_field, name_field){
-    let year_select = document.getElementById("year_field");
-    let name_select = document.getElementById("name_field");
+    let year_select = document.getElementById(year_field);
+    let name_select = document.getElementById(name_field);
 
     year_select.onchange = function(){
       year = year_select.value;
@@ -53,6 +54,13 @@
         });
       });
     }
+  }
+
+  var i;
+  for ( i = 0; i < 13; i++ ){
+    year = "home_players-" + i + "-year"
+    name = "home_players-" + i + "-player_name"
+    playerlist_update(year, name)
   }
 
 </script>

@@ -213,5 +213,7 @@ form input#submit:hover{
 
   .column {
   float: left;
+  text-align: left;
+  padding-left: 50px;
   width: 50%;
   }
