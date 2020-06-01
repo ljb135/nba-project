@@ -15,7 +15,7 @@ class PlayerForm(Form):
 
 # User entry form for entering players on home/away teams
 class PlayerSelectionForm(FlaskForm):
-    home_players = FieldList(FormField(PlayerForm), min_entries=13, max_entries=13)
-    away_players = FieldList(FormField(PlayerForm),  min_entries=13, max_entries=13)
+    home_players = FieldList(FormField(PlayerForm), validators=[InputRequired()], min_entries=13, max_entries=13)
+    away_players = FieldList(FormField(PlayerForm), validators=[InputRequired()], min_entries=13, max_entries=13)
 
     submit = SubmitField('Predict')
