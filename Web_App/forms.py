@@ -9,7 +9,7 @@ class PlayerForm(Form):
     for i in range(1996, 2020):
         year_options.append((str(i), f"{i}-{i + 1}"))
 
-    year = SelectField('Year', validators=[InputRequired()], choices=year_options, default="Empty")
+    year = SelectField('Year', validators=[InputRequired()], choices=year_options)
     player_name = SelectField('Player Name', validators=[InputRequired()], choices=[])
 
 

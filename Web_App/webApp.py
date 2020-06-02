@@ -1,7 +1,7 @@
-from flask import Flask, url_for, render_template, redirect, jsonify, request
+from flask import Flask, url_for, render_template, redirect, jsonify, request, flash
 from forms import PlayerForm, PlayerSelectionForm
 import os
-from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData, select
+from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData, select, and_
 # from predict import run_model
 
 
@@ -41,6 +41,41 @@ players = Table('players', meta,
 )
 
 
+def home_validation(home_players):
+    players_selected = 0
+    for player in home_players:
+        if player["year"] != "Empty" and player["player_name"] != "Empty":
+            players_selected += 1
+
+    if players_selected < 5:
+        return False
+    else:
+        return True
+
+
+def away_validation(away_players):
+    players_selected = 0
+    for player in away_players:
+        if player["year"] != "Empty" and player["player_name"] != "Empty":
+            players_selected += 1
+
+    if players_selected < 5:
+        return False
+    else:
+        return True
+
+
+def get_prediction(home_players, away_players):
+    for player in home_players:
+        year = player["year"]
+        player_id = player["player_name"]
+        if year != "Empty" and player_id != "Empty":
+            query = select([players]).where(and_(players.c.YEAR == year, players.c.PLAYER_ID == player_id)).one()
+            conn = db.connect()
+            result = conn.execute(query)
+            print(result)
+
+
 @app.route('/', methods=('GET', 'POST'))
 def homepage():
     form = PlayerSelectionForm()
@@ -52,8 +87,19 @@ def homepage():
         player.player_name.choices = player_choices
 
     if request.method == "POST":
-        print(form.home_players.data)
-        print(form.away_players.data)
+        home_players = form.home_players.data
+        away_players = form.away_players.data
+
+        if not away_validation(away_players) and not home_validation(home_players):
+            flash("Please enter 5 players on both teams.", "error")
+        elif not home_validation(home_players):
+            flash("Please enter 5 players on the home team.", "error")
+        elif not away_validation(away_players):
+            flash("Please enter 5 players on the away team.", "error")
+        else:
+            get_prediction(home_players, away_players)
+            flash("The probability that the home team wins is 50%", "success")
+
         # home_team_players = {}
         # for i in range(1, 14):
         #     year_label = "home_year_" + str(i)
@@ -64,9 +110,7 @@ def homepage():
         #     year_label = "away_year_" + str(i)
         #     name_label = "away_" + str(i)
         #     away_team_players[i] = [request.form[year_label], request.form[name_label]]
-        return redirect(url_for('prediction'))
-    else:
-        print(form.errors)
+
     return render_template('request.html', form=form, title='Home')
 
 

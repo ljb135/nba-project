@@ -1,3 +1,13 @@
+<div class="container2">
+  {% with messages = get_flashed_messages(category_filter=["error"]) %}
+    {% if messages %}
+      {% for message in messages %}
+        {{ message }}
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+</div>
+
 {%  extends "layout.html" %}
 {% block content %}
 <div class = "subheading">
@@ -7,7 +17,6 @@
     5 players for each team are required - you may enter up to 13.
   </h2>
 </div>
-
 <form method="POST" action="">
   {{ form.hidden_tag() }}
   <div class="form">
@@ -38,7 +47,13 @@
     {% endif %}
   </div>
 </form>
-
+{% with messages = get_flashed_messages(category_filter=["success"]) %}
+  {% if messages %}
+    {% for message in messages %}
+      <h5>{{ message }} </h5>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
 <script>
   function playerlist_update(year_field, name_field){
     let year_select = document.getElementById(year_field);
