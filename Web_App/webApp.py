@@ -41,21 +41,9 @@ players = Table('players', meta,
 )
 
 
-def home_validation(home_players):
+def player_validation(players):
     players_selected = 0
-    for player in home_players:
-        if player["year"] != "Empty" and player["player_name"] != "Empty":
-            players_selected += 1
-
-    if players_selected < 5:
-        return False
-    else:
-        return True
-
-
-def away_validation(away_players):
-    players_selected = 0
-    for player in away_players:
+    for player in players:
         if player["year"] != "Empty" and player["player_name"] != "Empty":
             players_selected += 1
 
@@ -90,7 +78,7 @@ def homepage():
         home_players = form.home_players.data
         away_players = form.away_players.data
 
-        if not away_validation(away_players) and not home_validation(home_players):
+        if not player_validation(away_players) and not player_validation(home_players):
             flash("Please enter 5 players on both teams.", "error")
         elif not home_validation(home_players):
             flash("Please enter 5 players on the home team.", "error")
