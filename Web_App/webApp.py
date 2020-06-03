@@ -80,9 +80,9 @@ def homepage():
 
         if not player_validation(away_players) and not player_validation(home_players):
             flash("Please enter 5 players on both teams.", "error")
-        elif not home_validation(home_players):
+        elif not player_validation(home_players):
             flash("Please enter 5 players on the home team.", "error")
-        elif not away_validation(away_players):
+        elif not player_validation(away_players):
             flash("Please enter 5 players on the away team.", "error")
         else:
             get_prediction(home_players, away_players)
