@@ -1,8 +1,9 @@
 from flask import Flask, url_for, render_template, redirect, jsonify, request, flash
 from forms import PlayerForm, PlayerSelectionForm
+from numpy import zeros
 import os
 from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData, select, and_
-# from predict import run_model
+from predict import run_model
 
 
 template_dir = os.path.abspath('../../NBA-Project/Web_App/templates')
@@ -53,15 +54,45 @@ def player_validation(players):
         return True
 
 
-def get_prediction(home_players, away_players):
+def get_stats(home_players, away_players):
+    num_home_players = 0
+    home_stats = []
+
     for player in home_players:
         year = player["year"]
         player_id = player["player_name"]
         if year != "Empty" and player_id != "Empty":
-            query = select([players]).where(and_(players.c.YEAR == year, players.c.PLAYER_ID == player_id)).one()
+            print("RUN")
+            query = select([players]).where(and_(players.c.YEAR == year, players.c.PLAYER_ID == player_id))
             conn = db.connect()
             result = conn.execute(query)
-            print(result)
+            result = result.fetchone().values()
+            del result[0:3]
+            home_stats.extend(result)
+            num_home_players += 1
+
+    for x in range(num_home_players, 13):
+        home_stats.extend(zeros(21))
+
+    num_away_players = 0
+    away_stats = []
+    for player in away_players:
+        year = player["year"]
+        player_id = player["player_name"]
+        if year != "Empty" and player_id != "Empty":
+            print("RUN")
+            query = select([players]).where(and_(players.c.YEAR == year, players.c.PLAYER_ID == player_id))
+            conn = db.connect()
+            result = conn.execute(query)
+            result = result.fetchone().values()
+            del result[0:3]
+            away_stats.extend(result)
+            num_away_players += 1
+
+    for x in range(num_away_players, 13):
+        away_stats.extend(zeros(21))
+
+    return home_stats, away_stats
 
 
 @app.route('/', methods=('GET', 'POST'))
@@ -79,13 +110,16 @@ def homepage():
         away_players = form.away_players.data
 
         if not player_validation(away_players) and not player_validation(home_players):
+            home_stats, away_stats = get_stats(home_players, away_players)
+            prediction = run_model(home_stats, away_stats)
             flash("Please enter 5 players on both teams.", "error")
         elif not player_validation(home_players):
             flash("Please enter 5 players on the home team.", "error")
         elif not player_validation(away_players):
             flash("Please enter 5 players on the away team.", "error")
         else:
-            get_prediction(home_players, away_players)
+            home_stats, away_stats = get_stats(home_players, away_players)
+            prediction = run_model(home_stats, away_stats)
             flash("The probability that the home team wins is 50%", "success")
 
         # home_team_players = {}
@@ -102,9 +136,9 @@ def homepage():
     return render_template('request.html', form=form, title='Home')
 
 
-@app.route('/prediction', methods=('GET', 'POST'))
-def prediction():
-    return render_template('result.html', title='Prediction')
+# @app.route('/prediction', methods=('GET', 'POST'))
+# def prediction():
+#     return render_template('result.html', title='Prediction')
 
 
 @app.route('/update/<year>')
@@ -125,4 +159,10 @@ def update(year):
 
 
 if __name__ == '__main__':
+    # query = select([players]).where(and_(players.c.YEAR == '2001', players.c.PLAYER_ID == '1502'))
+    # conn = db.connect()
+    # result = conn.execute(query)
+    # result = result.fetchone().values()
+    # del result[0:3]
+    # print(result)
     app.run(host='0.0.0.0', port=50000, debug=True)
