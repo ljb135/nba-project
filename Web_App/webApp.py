@@ -50,7 +50,7 @@ def player_validation(players):
         if player["year"] != "Empty" and player["player_name"] != "Empty":
             players_selected += 1
 
-    if players_selected < 5:
+    if players_selected < 8:
         return False
     else:
         return True
@@ -138,6 +138,10 @@ def homepage():
 
         if not player_validation(away_players) and not player_validation(home_players):
             flash("Please enter 5 players on both teams.", "error")
+            stats = np.array([get_stats(home_players, away_players)])
+            prediction = model.predict(stats)
+            message = "The probability that the home team wins is " + str((prediction[0][0] * 100).round(1)) + "%"
+            flash(message, "success")
         elif not player_validation(home_players):
             flash("Please enter 5 players on the home team.", "error")
         elif not player_validation(away_players):
@@ -145,9 +149,8 @@ def homepage():
         else:
             stats = np.array([get_stats(home_players, away_players)])
             prediction = model.predict(stats)
-            print(stats)
-            print(prediction)
-            flash(f"The probability that the home team wins is {(prediction[0][0]*100).round(1)}%", "success")
+            message = "The probability that the home team wins is " + str((prediction[0][0] * 100).round(1)) + "%"
+            flash(message, "success")
 
     return render_template('request.html', form=form, title='Home')
 
