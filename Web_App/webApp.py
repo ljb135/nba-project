@@ -1,19 +1,21 @@
 from flask import Flask, url_for, render_template, redirect, jsonify, request, flash
 from forms import PlayerForm, PlayerSelectionForm
-from numpy import zeros
+import numpy as np
 import os
 from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData, select, and_
-from predict import run_model
+from tensorflow import keras
+import csv
 
-
+# WebApp configuration and file paths
 template_dir = os.path.abspath('../../NBA-Project/Web_App/templates')
-print(template_dir)
-
 app = Flask(__name__, template_folder=template_dir)
 app.config['SECRET_KEY'] = 'ao19s2en1638nsh6msh172kd0s72ksj2'
+model = keras.models.load_model('../../NBA-Project/Model/NBA_Game_model.h5')
 db = create_engine('sqlite:///NBAPlayers.db', echo=True)
 meta = MetaData()
+formdata_filename = "form_data.csv"
 
+# Table format from database
 players = Table('players', meta,
     Column('NAME', String),
     Column('PLAYER_ID', String, primary_key=True),
@@ -42,6 +44,7 @@ players = Table('players', meta,
 )
 
 
+# Returns true if at least 5 players were entered into the form for a team
 def player_validation(players):
     players_selected = 0
     for player in players:
@@ -54,25 +57,27 @@ def player_validation(players):
         return True
 
 
+# Processes information entered into form - returns an array of stats to be analyzed by our model
 def get_stats(home_players, away_players):
+
     num_home_players = 0
     home_stats = []
-
     for player in home_players:
         year = player["year"]
         player_id = player["player_name"]
         if year != "Empty" and player_id != "Empty":
-            print("RUN")
             query = select([players]).where(and_(players.c.YEAR == year, players.c.PLAYER_ID == player_id))
             conn = db.connect()
             result = conn.execute(query)
+
             result = result.fetchone().values()
             del result[0:3]
             home_stats.extend(result)
+
             num_home_players += 1
 
     for x in range(num_home_players, 13):
-        home_stats.extend(zeros(21))
+        home_stats.extend(np.zeros(21))
 
     num_away_players = 0
     away_stats = []
@@ -84,17 +89,27 @@ def get_stats(home_players, away_players):
             query = select([players]).where(and_(players.c.YEAR == year, players.c.PLAYER_ID == player_id))
             conn = db.connect()
             result = conn.execute(query)
+
             result = result.fetchone().values()
             del result[0:3]
             away_stats.extend(result)
+
             num_away_players += 1
 
     for x in range(num_away_players, 13):
-        away_stats.extend(zeros(21))
+        away_stats.extend(np.zeros(21))
 
-    return home_stats, away_stats
+    home_stats.extend(away_stats)
+    stats = np.rot90(home_stats)
+
+    return stats
+
+    # with open(formdata_filename, 'w', newline='') as csv_file:
+    #     csv_writer = csv.writer(csv_file)  # creating a csv writer object
+    #     csv_writer.writerows(stats)  # writing the data rows
 
 
+# Route for webapp homepage - contains form
 @app.route('/', methods=('GET', 'POST'))
 def homepage():
     form = PlayerSelectionForm()
@@ -110,37 +125,29 @@ def homepage():
         away_players = form.away_players.data
 
         if not player_validation(away_players) and not player_validation(home_players):
-            home_stats, away_stats = get_stats(home_players, away_players)
-            prediction = run_model(home_stats, away_stats)
+            stats = get_stats(home_players, away_players)
+            # get_stats(home_players, away_players)
+            # form_data = np.loadtxt(formdata_filename, delimiter=',')
+            # stats = form_data[:]
+            prediction = model.predict(stats)
+            print(prediction)
+
+            flash("The probability that the home team wins is 50%", "success")
             flash("Please enter 5 players on both teams.", "error")
         elif not player_validation(home_players):
             flash("Please enter 5 players on the home team.", "error")
         elif not player_validation(away_players):
             flash("Please enter 5 players on the away team.", "error")
         else:
-            home_stats, away_stats = get_stats(home_players, away_players)
-            prediction = run_model(home_stats, away_stats)
+            stats = get_stats(home_players, away_players)
+            prediction = model.predict(stats)
+            print(prediction)
             flash("The probability that the home team wins is 50%", "success")
-
-        # home_team_players = {}
-        # for i in range(1, 14):
-        #     year_label = "home_year_" + str(i)
-        #     name_label = "home_" + str(i)
-        #     home_team_players[i] = [request.form[year_label], request.form[name_label]]
-        # away_team_players = {}
-        # for i in range(1, 14):
-        #     year_label = "away_year_" + str(i)
-        #     name_label = "away_" + str(i)
-        #     away_team_players[i] = [request.form[year_label], request.form[name_label]]
 
     return render_template('request.html', form=form, title='Home')
 
 
-# @app.route('/prediction', methods=('GET', 'POST'))
-# def prediction():
-#     return render_template('result.html', title='Prediction')
-
-
+# Queries database for list of names given the year - returns a JSON dictionary of objects containing player name and ID
 @app.route('/update/<year>')
 def update(year):
     query = select([players.c.PLAYER_ID, players.c.NAME]).where(players.c.YEAR == year)
@@ -159,10 +166,4 @@ def update(year):
 
 
 if __name__ == '__main__':
-    # query = select([players]).where(and_(players.c.YEAR == '2001', players.c.PLAYER_ID == '1502'))
-    # conn = db.connect()
-    # result = conn.execute(query)
-    # result = result.fetchone().values()
-    # del result[0:3]
-    # print(result)
     app.run(host='0.0.0.0', port=50000, debug=True)

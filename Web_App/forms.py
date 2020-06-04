@@ -3,7 +3,7 @@ from wtforms import StringField, TextField, SubmitField, SelectField, Form, Form
 from wtforms.validators import InputRequired, Length
 
 
-# Form for a single player to be duplicated
+# Form for a single player to be duplicated in PlayerSelectionForm
 class PlayerForm(Form):
     year_options = [("Empty", "Empty")]
     for i in range(1996, 2020):

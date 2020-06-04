@@ -10,6 +10,7 @@
 
 {%  extends "layout.html" %}
 {% block content %}
+
 <div class = "subheading">
   <h2>
     Enter the names and years of the players on both teams.
@@ -17,8 +18,11 @@
     5 players for each team are required - you may enter up to 13.
   </h2>
 </div>
+
 <form method="POST" action="">
+
   {{ form.hidden_tag() }}
+
   <div class="form">
     <div class="column">
       <h3><u><b>Home Team</b></u></h3>
@@ -46,7 +50,9 @@
       {{form.errors}}
     {% endif %}
   </div>
+
 </form>
+
 {% with messages = get_flashed_messages(category_filter=["success"]) %}
   {% if messages %}
     {% for message in messages %}
@@ -54,6 +60,7 @@
     {% endfor %}
   {% endif %}
 {% endwith %}
+
 <script>
   function playerlist_update(year_field, name_field){
     let year_select = document.getElementById(year_field);
@@ -84,6 +91,6 @@
     name = "away_players-" + i + "-player_name"
     playerlist_update(year, name)
   }
-
 </script>
+
 {% endblock content %}
