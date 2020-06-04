@@ -100,9 +100,9 @@ def get_stats(home_players, away_players):
         away_stats.extend(np.zeros(21))
 
     home_stats.extend(away_stats)
-    stats = np.rot90(home_stats)
+    stats = home_stats
 
-    return stats
+    return np.array(stats)
 
     # with open(formdata_filename, 'w', newline='') as csv_file:
     #     csv_writer = csv.writer(csv_file)  # creating a csv writer object
@@ -126,6 +126,8 @@ def homepage():
 
         if not player_validation(away_players) and not player_validation(home_players):
             stats = get_stats(home_players, away_players)
+            print(stats)
+            print(type(stats))
             # get_stats(home_players, away_players)
             # form_data = np.loadtxt(formdata_filename, delimiter=',')
             # stats = form_data[:]
