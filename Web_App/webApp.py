@@ -104,7 +104,7 @@ def get_stats(home_players, away_players):
 
 
 def mod_min_ratio(home_stats, away_stats):
-    edit_stat_indexes = [4, 5, 7, 9, 11, 12, 13, 14, 15, 16, 17, 18]
+    edit_stat_indexes = [3, 4, 5, 7, 9, 11, 12, 13, 14, 15, 16, 17, 18]
 
     home_total_min = sum(home_stats[0:273:21])
     home_min_ratio = 5*48/home_total_min
@@ -137,11 +137,6 @@ def homepage():
         away_players = form.away_players.data
 
         if not player_validation(away_players) and not player_validation(home_players):
-            stats = np.array([get_stats(home_players, away_players)])
-            prediction = model.predict(stats)
-            print(prediction)
-
-            flash("The probability that the home team wins is 50%", "success")
             flash("Please enter 5 players on both teams.", "error")
         elif not player_validation(home_players):
             flash("Please enter 5 players on the home team.", "error")
@@ -150,8 +145,9 @@ def homepage():
         else:
             stats = np.array([get_stats(home_players, away_players)])
             prediction = model.predict(stats)
+            print(stats)
             print(prediction)
-            flash("The probability that the home team wins is 50%", "success")
+            flash(f"The probability that the home team wins is {(prediction[0][0]*100).round(1)}%", "success")
 
     return render_template('request.html', form=form, title='Home')
 
