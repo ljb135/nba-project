@@ -13,7 +13,6 @@ app.config['SECRET_KEY'] = 'ao19s2en1638nsh6msh172kd0s72ksj2'
 model = keras.models.load_model('../../NBA-Project/Model/NBA_Game_model.h5')
 db = create_engine('sqlite:///NBAPlayers.db', echo=True)
 meta = MetaData()
-formdata_filename = "form_data.csv"
 
 # Table format from database
 players = Table('players', meta,
@@ -99,14 +98,27 @@ def get_stats(home_players, away_players):
     for x in range(num_away_players, 13):
         away_stats.extend(np.zeros(21))
 
-    home_stats.extend(away_stats)
-    stats = home_stats
+    stats = mod_min_ratio(home_stats, away_stats)
 
     return np.array(stats)
 
-    # with open(formdata_filename, 'w', newline='') as csv_file:
-    #     csv_writer = csv.writer(csv_file)  # creating a csv writer object
-    #     csv_writer.writerows(stats)  # writing the data rows
+
+def mod_min_ratio(home_stats, away_stats):
+    edit_stat_indexes = [4, 5, 7, 9, 11, 12, 13, 14, 15, 16, 17, 18]
+
+    home_total_min = sum(home_stats[0:273:21])
+    home_min_ratio = 5*48/home_total_min
+    for i in range(0, 13):
+        for j in edit_stat_indexes:
+            home_stats[i*21+j] = round(home_stats[i*21+j] * home_min_ratio, 1)
+
+    away_total_min = sum(away_stats[0:273:21])
+    away_min_ratio = 5*48/away_total_min
+    for i in range(0, 13):
+        for j in edit_stat_indexes:
+            away_stats[i*21+j] = round(away_stats[i*21+j] * away_min_ratio, 1)
+
+    return home_stats + away_stats
 
 
 # Route for webapp homepage - contains form
@@ -125,12 +137,7 @@ def homepage():
         away_players = form.away_players.data
 
         if not player_validation(away_players) and not player_validation(home_players):
-            stats = get_stats(home_players, away_players)
-            print(stats)
-            print(type(stats))
-            # get_stats(home_players, away_players)
-            # form_data = np.loadtxt(formdata_filename, delimiter=',')
-            # stats = form_data[:]
+            stats = np.array([get_stats(home_players, away_players)])
             prediction = model.predict(stats)
             print(prediction)
 
@@ -141,7 +148,7 @@ def homepage():
         elif not player_validation(away_players):
             flash("Please enter 5 players on the away team.", "error")
         else:
-            stats = get_stats(home_players, away_players)
+            stats = np.array([get_stats(home_players, away_players)])
             prediction = model.predict(stats)
             print(prediction)
             flash("The probability that the home team wins is 50%", "success")
