@@ -15,7 +15,7 @@
   <h2>
     Enter the names and years of the players on both teams.
     <br>
-    8 players for each team are required - you may enter up to 13.
+    9 players for each team are required - you may enter up to 13.
   </h2>
 </div>
 
@@ -68,6 +68,7 @@
 
     year_select.onchange = function(){
       year = year_select.value;
+      sessionStorage.setItem(year_field, year);
       fetch("/update/" + year).then(function(response){
         response.json().then(function(data){
           let optionHTML = '';
@@ -78,6 +79,19 @@
         });
       });
     }
+    name_select.onchange = function(){
+      name = name_select.value;
+      sessionStorage.setItem(name_field, name);
+    }
+
+    window.addEventListener("load", function() {
+      if (sessionStorage[year_field]){
+        year_select.innerHTML = sessionStorage.getItem(year_field);
+      }
+      if (sessionStorage[name_field]){
+        name_select.innerHTML = sessionStorage.getItem(name_field);
+      }
+    }, false);
   }
 
   var i;

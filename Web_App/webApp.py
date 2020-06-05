@@ -50,7 +50,7 @@ def player_validation(players):
         if player["year"] != "Empty" and player["player_name"] != "Empty":
             players_selected += 1
 
-    if players_selected < 8:
+    if players_selected < 9:
         return False
     else:
         return True
