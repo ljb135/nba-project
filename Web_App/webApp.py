@@ -137,15 +137,11 @@ def homepage():
         away_players = form.away_players.data
 
         if not player_validation(away_players) and not player_validation(home_players):
-            flash("Please enter 5 players on both teams.", "error")
-            stats = np.array([get_stats(home_players, away_players)])
-            prediction = model.predict(stats)
-            message = "The probability that the home team wins is " + str((prediction[0][0] * 100).round(1)) + "%"
-            flash(message, "success")
+            flash("Please enter 9 players on both teams.", "error")
         elif not player_validation(home_players):
-            flash("Please enter 5 players on the home team.", "error")
+            flash("Please enter 9 players on the home team.", "error")
         elif not player_validation(away_players):
-            flash("Please enter 5 players on the away team.", "error")
+            flash("Please enter 9 players on the away team.", "error")
         else:
             stats = np.array([get_stats(home_players, away_players)])
             prediction = model.predict(stats)

@@ -1,4 +1,7 @@
-<div class="container2">
+{%  extends "layout.html" %}
+
+{% block error %}
+<div class="container2" id="error_message">
   {% with messages = get_flashed_messages(category_filter=["error"]) %}
     {% if messages %}
       {% for message in messages %}
@@ -7,10 +10,9 @@
     {% endif %}
   {% endwith %}
 </div>
+{% endblock error %}
 
-{%  extends "layout.html" %}
 {% block content %}
-
 <div class = "subheading">
   <h2>
     Enter the names and years of the players on both teams.
@@ -53,13 +55,15 @@
 
 </form>
 
-{% with messages = get_flashed_messages(category_filter=["success"]) %}
-  {% if messages %}
-    {% for message in messages %}
-      <h5>{{ message }} </h5>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
+<div class="container3" id="prediction">
+  {% with messages = get_flashed_messages(category_filter=["success"]) %}
+    {% if messages %}
+      {% for message in messages %}
+        {{ message }}
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+</div>
 
 <script>
   function playerlist_update(year_field, name_field){
@@ -67,6 +71,14 @@
     let name_select = document.getElementById(name_field);
 
     year_select.onchange = function(){
+      error_container = document.getElementById('error_message');
+      prediction_container = document.getElementById('prediction');
+      if (error_container != null){
+        error_container.innerHTML = "";
+      }
+      if (prediction_container != null){
+        prediction_container.innerHTML = "";
+      }
       year = year_select.value;
       sessionStorage.setItem(year_field, year);
       fetch("/update/" + year).then(function(response){
@@ -80,27 +92,68 @@
       });
     }
     name_select.onchange = function(){
+      error_container = document.getElementById('error_message');
+      prediction_container = document.getElementById('prediction');
+      if (error_container !== null){
+        error_container.innerHTML = "";
+      }
+      if (prediction_container !== null){
+        prediction_container.innerHTML = "";
+      }
+
       name = name_select.value;
       sessionStorage.setItem(name_field, name);
     }
 
     window.addEventListener("load", function() {
       if (sessionStorage[year_field]){
-        year_select.innerHTML = sessionStorage.getItem(year_field);
-      }
-      if (sessionStorage[name_field]){
-        name_select.innerHTML = sessionStorage.getItem(name_field);
+        selected_year = sessionStorage.getItem(year_field);
+
+        var i;
+        year_optionHTML = '';
+        for (i = 1996; i < 2020; i++){
+          if (i.toString() == selected_year){
+            year_optionHTML += "<option value=" + i.toString() + " selected>" + i.toString() + "-" + (i+1).toString() + "</option>";
+          }
+          else{
+            year_optionHTML += "<option value=" + i.toString() + ">" + i.toString() + "-" + (i+1).toString() + "</option>";
+          }
+        }
+        year_select.innerHTML = year_optionHTML;
+
+        fetch("/update/" + selected_year).then(function(response){
+          response.json().then(function(data){
+            let name_optionHTML = '';
+            if (sessionStorage[name_field]){
+              selected_name = sessionStorage.getItem(name_field);
+              for(let player of data.players){
+                if (player.player_id.toString() == selected_name){
+                  name_optionHTML += "<option value=" + player.player_id.toString() + " selected>" + player.name.toString() + "</option>";
+                }
+                else{
+                  name_optionHTML += "<option value=" + player.player_id.toString() + ">" + player.name.toString() + "</option>";
+                }
+              }
+            }
+            else{
+              for(let player of data.players){
+                name_optionHTML += "<option value=" + player.player_id.toString() + ">" + player.name.toString() + "</option>";
+              }
+            }
+            name_select.innerHTML = name_optionHTML;
+          });
+        });
       }
     }, false);
   }
 
   var i;
-  for ( i = 0; i < 13; i++ ){
+  for (i = 0; i < 13; i++){
     year = "home_players-" + i + "-year"
     name = "home_players-" + i + "-player_name"
     playerlist_update(year, name)
   }
-  for ( i = 0; i < 13; i++ ){
+  for (i = 0; i < 13; i++){
     year = "away_players-" + i + "-year"
     name = "away_players-" + i + "-player_name"
     playerlist_update(year, name)

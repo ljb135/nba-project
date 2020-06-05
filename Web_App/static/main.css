@@ -40,6 +40,16 @@
     color: white;
   }
 
+  .container3 {
+    font-family: 'Raleway', serif;
+    font-weight: normal;
+    display: block;
+    font-size: 24px;
+    margin: auto;
+    padding: 15px;
+    color: black;
+  }
+
   .container {
     text-align: center;
     background-color: MintCream;
@@ -111,16 +121,6 @@
     display: inline;
     font-size: 18px;
     margin: auto auto auto 10px;
-    color: black;
-  }
-
-  h5 {
-    font-family: 'Raleway', serif;
-    font-weight: normal;
-    display: block;
-    font-size: 24px;
-    margin: auto;
-    padding: 15px;
     color: black;
   }
 
