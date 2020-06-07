@@ -1,43 +1,154 @@
 {%  extends "layout.html" %}
+
+{% block error %}
+<div class="container2" id="error_message">
+  {% with messages = get_flashed_messages(category_filter=["error"]) %}
+    {% if messages %}
+      {% for message in messages %}
+        {{ message }}
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+</div>
+{% endblock error %}
+
 {% block content %}
+<div class = "subheading">
+  <h2>
+    Enter the names and years of the players on both teams.
+    <br>
+    9 players for each team are required - you may enter up to 13.
+  </h2>
+</div>
+
 <form method="POST" action="">
+
   {{ form.hidden_tag() }}
-  <div class="column">
-    <h2>
-      <center>Home Team</center>
-    </h2>
-    <div class="form">{{ form.home_1.label }} {{ form.home_year_1 }} {{ form.home_1 }}</div>
-    <div class="form">{{ form.home_2.label }} {{ form.home_year_2 }} {{ form.home_2 }}</div>
-    <div class="form">{{ form.home_3.label }} {{ form.home_year_3 }} {{ form.home_3 }}</div>
-    <div class="form">{{ form.home_4.label }} {{ form.home_year_4 }} {{ form.home_4 }}</div>
-    <div class="form">{{ form.home_5.label }} {{ form.home_year_5 }} {{ form.home_5 }}</div>
-    <div class="form">{{ form.home_6.label }} {{ form.home_year_6 }} {{ form.home_6 }}</div>
-    <div class="form">{{ form.home_7.label }} {{ form.home_year_7 }} {{ form.home_7 }}</div>
-    <div class="form">{{ form.home_8.label }} {{ form.home_year_8 }} {{ form.home_8 }}</div>
-    <div class="form">{{ form.home_9.label }} {{ form.home_year_9 }} {{ form.home_9 }}</div>
-    <div class="form">{{ form.home_10.label }} {{ form.home_year_10 }} {{ form.home_10 }}</div>
-    <div class="form">{{ form.home_11.label }} {{ form.home_year_11 }} {{ form.home_11 }}</div>
-    <div class="form">{{ form.home_12.label }} {{ form.home_year_12 }} {{ form.home_12 }}</div>
-    <div class="form">{{ form.home_13.label }} {{ form.home_year_13 }} {{ form.home_13 }}</div>
+
+  <div class="form">
+
+    <div class="column">
+      <h3><u><b>Home Team</b></u></h3>
+      <div class = "partialform">
+        {% for player in form.home_players %}
+        <h3><b>{{ loop.index }}.</b> {{ player.year }} {{ player.player_name }}</h3>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="column">
+      <h3><u><b>Away Team</b></u></h3>
+      <div class = "partialform">
+        {% for player in form.away_players %}
+        <h3><b>{{ loop.index }}.</b> {{ player.year }} {{ player.player_name }}</h3>
+        {% endfor %}
+      </div>
+    </div>
+
+    <h2>{{ form.submit }}</h2>
+
+    {% if form.errors %}
+      {{form.errors}}
+    {% endif %}
   </div>
-  <div class="column">
-    <h2>
-      <center>Away Team</center>
-    </h2>
-    <div class="form">{{ form.away_1.label }} {{ form.away_year_1 }} {{ form.away_1 }}</div>
-    <div class="form">{{ form.away_2.label }} {{ form.away_year_2 }} {{ form.away_2 }}</div>
-    <div class="form">{{ form.away_3.label }} {{ form.away_year_3 }} {{ form.away_3 }}</div>
-    <div class="form">{{ form.away_4.label }} {{ form.away_year_4 }} {{ form.away_4 }}</div>
-    <div class="form">{{ form.away_5.label }} {{ form.away_year_5 }} {{ form.away_5 }}</div>
-    <div class="form">{{ form.away_6.label }} {{ form.away_year_6 }} {{ form.away_6 }}</div>
-    <div class="form">{{ form.away_7.label }} {{ form.away_year_7 }} {{ form.away_7 }}</div>
-    <div class="form">{{ form.away_8.label }} {{ form.away_year_8 }} {{ form.away_8 }}</div>
-    <div class="form">{{ form.away_9.label }} {{ form.away_year_9 }} {{ form.away_9 }}</div>
-    <div class="form">{{ form.away_10.label }} {{ form.away_year_10 }} {{ form.away_10 }}</div>
-    <div class="form">{{ form.away_11.label }} {{ form.away_year_11 }} {{ form.away_11 }}</div>
-    <div class="form">{{ form.away_12.label }} {{ form.away_year_12 }} {{ form.away_12 }}</div>
-    <div class="form">{{ form.away_13.label }} {{ form.away_year_13 }} {{ form.away_13 }}</div>
-  </div>
-  <div class="form">{{ form.submit }}</div>
+
 </form>
+
+<div class="container3" id="prediction">
+  {% with messages = get_flashed_messages(category_filter=["success"]) %}
+    {% if messages %}
+      {% for message in messages %}
+        {{ message }}
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+</div>
+
+<script>
+	function delete_containers(){
+		let error_container = document.getElementById('error_message');
+		let prediction_container = document.getElementById('prediction');
+
+		if (error_container != null){
+			error_container.innerHTML = "";
+		}
+		if (prediction_container != null){
+			prediction_container.innerHTML = "";
+		}
+	}
+	function update_yearHTML(selected_year, year_field){
+		let year_optionHTML = "<option value=Empty>Empty</option>";
+		for (let i = 1996; i < 2020; i++){
+			if (i.toString() == selected_year){
+				year_optionHTML += "<option value=" + i.toString() + " selected>" + i.toString() + "-" + (i + 1).toString() + "</option>";
+			}
+			else{
+				year_optionHTML += "<option value=" + i.toString() + ">" + i.toString() + "-" + (i + 1).toString() + "</option>";
+			}
+		}
+		year_field.innerHTML = year_optionHTML;
+	}
+	function update_playerHTML(selected_year, selected_player, player_field){
+		if (selected_year == "Empty"){
+			let player_optionHTML = "<option value=Empty>Empty</option>";
+			player_field.innerHTML = player_optionHTML;
+		}
+		else{
+			fetch("/update/" + selected_year).then(function(response){
+				response.json().then(function(data){
+					let player_optionHTML = "<option value=Empty>Empty</option>";
+					for(let player of data.players){
+						if (player.player_id.toString() == selected_player){
+							player_optionHTML += "<option value=" + player.player_id.toString() + " selected>" + player.name.toString() + "</option>";
+						}
+						else{
+							player_optionHTML += "<option value=" + player.player_id.toString() + ">" + player.name.toString() + "</option>";
+						}
+					}
+					player_field.innerHTML = player_optionHTML;
+				});
+			});
+		}
+	}
+	function playerlist_update(year_field_name, player_field_name){
+		let year_field = document.getElementById(year_field_name);
+		let player_field = document.getElementById(player_field_name);
+
+		year_field.onchange = function(){
+			delete_containers();
+
+			let selected_year = year_field.value;
+			sessionStorage.setItem(year_field_name, selected_year);
+			update_playerHTML(selected_year, "Empty", player_field);
+		}
+		player_field.onchange = function(){
+			delete_containers();
+
+			let selected_player = player_field.value;
+			sessionStorage.setItem(player_field_name, selected_player);
+		}
+		window.addEventListener("load", function(){
+			if (sessionStorage[year_field_name]){
+				let load_year = sessionStorage.getItem(year_field_name);
+				update_yearHTML(load_year, year_field);
+				let load_player = "Empty";
+				if (sessionStorage[player_field_name]){
+					load_player = sessionStorage.getItem(player_field_name);
+				}
+				update_playerHTML(load_year, load_player, player_field);
+			}
+		});
+	}
+
+	for (let i = 0; i < 13; i++){
+		let home_year = "home_players-" + i + "-year";
+		let home_player = "home_players-" + i + "-player_name";
+		let away_year = "away_players-" + i + "-year";
+		let away_player = "away_players-" + i + "-player_name";
+
+		playerlist_update(home_year, home_player);
+		playerlist_update(away_year, away_player);
+	}
+</script>
+
 {% endblock content %}

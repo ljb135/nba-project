@@ -6,7 +6,7 @@
   body {
     margin: 0;
     padding: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: 'Raleway', serif;
     color: #444;
     background-image: url("https://wallpaperaccess.com/full/103114.jpg");
     min-height: 100%;
@@ -15,10 +15,44 @@
     background-size: cover;
   }
 
+  .heading {
+    text-align: center;
+    background-color: black;
+    color: white;
+    padding: 10px;
+  }
+
+  .subheading {
+    text-align: center;
+    padding: 30px;
+  }
+
+  .submit {
+    text-align: center;
+    padding: 10px;
+  }
+
+  .container2 {
+    text-align: center;
+    background-color: FireBrick;
+    width: auto;
+    height: auto;
+    color: white;
+  }
+
+  .container3 {
+    font-family: 'Raleway', serif;
+    font-weight: normal;
+    display: block;
+    font-size: 24px;
+    margin: auto;
+    padding: 15px;
+    color: black;
+  }
 
   .container {
     text-align: center;
-    background-color: ivory;
+    background-color: MintCream;
     max-width: 940px;
     width: 85%;
     height: auto;
@@ -28,6 +62,7 @@
     border-width: 6px;
     margin-top: 100px;
     margin-bottom: 100px;
+    overflow: hidden;
   }
 
   .container::before {
@@ -54,31 +89,39 @@
 
 
   h1 {
-    font-family: 'Roboto', sans-serif;
-    color: black;
+    font-family: 'Raleway', sans-serif;
+    font-weight: light;
     display: block;
-    font-size: 48px;
-    margin-top: 8px;
-    margin-bottom: 8px;
-    margin-left: 0;
-    margin-right: 0;
-    font-weight: bold;
+    font-size: 42px;
+    margin: auto;
   }
 
   h2 {
-    font-size: 1.5em;
-    margin-top: 40px;
-    text-align: center;
-    letter-spacing: -2px;
+    font-family: 'Raleway', serif;
+    font-weight: normal;
+    display: block;
+    font-size: 25px;
+    margin: auto;
+    color: black;
   }
 
   h3 {
-    font-size: 1.7em;
-    font-weight: 100;
-    margin-top: 30px;
-    text-align: center;
-    letter-spacing: -1px;
-    color: #999;
+    font-family: 'Raleway', serif;
+    font-weight: normal;
+    display: block;
+    font-size: 20px;
+    margin: auto;
+    color: black;
+    padding-bottom: 20px;
+  }
+
+  h4 {
+    font-family: 'Raleway', serif;
+    font-weight: normal;
+    display: inline;
+    font-size: 18px;
+    margin: auto auto auto 10px;
+    color: black;
   }
 
   ul {
@@ -87,6 +130,18 @@
     padding: 0;
     overflow: hidden;
     background-color: #333;
+}
+
+select {
+    width: 150px;
+    font-family: 'Raleway', serif;
+    font-size: 15px;
+}
+
+input {
+    font-family: 'Raleway', serif;
+    text-align: center
+    background-color: white
 }
 
 li {
@@ -142,17 +197,16 @@ form textarea#message {
 }
 
 form input#submit {
-  height:40px;
-  width:100px;
-  margin: auto;
-  margin-bottom: 15px;
+  height: auto;
+  width: auto;
+  margin: auto auto auto auto;
+  padding: 10px;
   display: -webkit-box;
   -webkit-border-radius: 3px;
      -moz-border-radius: 3px;
           border-radius: 3px;
-  border:1px solid #d8d8d8;
-  padding: 10px;
-  font-weight:bold;
+  border: 1px solid #d8d8d8;
+  font-weight: bold;
   font-size:22px;
   text-align: center;
   color: #000000;
@@ -189,4 +243,9 @@ form input#submit:hover{
   .column {
   float: left;
   width: 50%;
+  }
+
+  .partialform {
+    text-align: right;
+    margin-right: 70px;
   }

@@ -98,7 +98,7 @@ def analyze_train_v2(train_csv_filename, test_csv_filename):
     inputTensor = Input((546,))
     group = []
     for id in range(0, 21):
-        group.append(Lambda(lambda x: x[:, id:546:21], output_shape=((26,)))(inputTensor))
+        group.append(Lambda(lambda x: x[:, id:546:21], output_shape=(26,))(inputTensor))
         group[id] = Dropout(0.1)(Dense(1, activation='relu', kernel_constraint=maxnorm(3))(group[id]))
     outputTensor = Concatenate()(group)
     outputTensor = Dense(1, activation='sigmoid')(Dense(4, activation='relu', kernel_constraint=maxnorm(3))(outputTensor))
@@ -106,7 +106,7 @@ def analyze_train_v2(train_csv_filename, test_csv_filename):
 
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    history = model.fit(x_train, y_train, epochs=75, batch_size=128, validation_data=(x_test, y_test), verbose=1)
+    history = model.fit(x_train, y_train, epochs=100, batch_size=32, validation_data=(x_test, y_test), verbose=1)
     print(model.evaluate(x_test, y_test))
 
     # graph training vs. validation accuracy over epochs
@@ -175,7 +175,8 @@ def read_csv_file(filename):
     return data_matrix
 
 
-neural_net = analyze_train("Data/training_data.csv", "Data/testing_data.csv")
+neural_net = analyze_train_v2("../Data/training_data.csv", "../Data/testing_data.csv")
+neural_net.save("NBA_Game_model2.h5")
 # test(neural_net, "testing_data.csv")
 # stats_excluded = 0
 # neural_net = train("training_data.csv")

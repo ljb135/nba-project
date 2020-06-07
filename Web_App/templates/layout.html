@@ -3,14 +3,17 @@
 <head>
     <title>NBA-Project - {{ title }}</title>
     <link rel="stylesheet" href="/static/main.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400&display=swap" rel="stylesheet">
 </head>
 
 <body>
+    {%  block error %}{%  endblock error %}
     <div class="container">
-        <h1>
-          <center>Statistical Analysis and Prediction of the NBA</center>
-        </h1>
+        <div class="heading">
+            <h1>
+                <center>Statistical Analysis and Prediction of the NBA</center>
+            </h1>
+        </div>
         {%  block content %}{%  endblock content %}
     </div>
 </body>
