@@ -26,6 +26,7 @@
   {{ form.hidden_tag() }}
 
   <div class="form">
+
     <div class="column">
       <h3><u><b>Home Team</b></u></h3>
       <div class = "partialform">
@@ -44,9 +45,7 @@
       </div>
     </div>
 
-    <div class = "row">
-      {{ form.submit }}
-    </div>
+    <h2>{{ form.submit }}</h2>
 
     {% if form.errors %}
       {{form.errors}}
@@ -66,98 +65,92 @@
 </div>
 
 <script>
-  function playerlist_update(year_field, name_field){
-    let year_select = document.getElementById(year_field);
-    let name_select = document.getElementById(name_field);
+	function delete_containers(){
+		let error_container = document.getElementById('error_message');
+		let prediction_container = document.getElementById('prediction');
 
-    year_select.onchange = function(){
-      error_container = document.getElementById('error_message');
-      prediction_container = document.getElementById('prediction');
-      if (error_container != null){
-        error_container.innerHTML = "";
-      }
-      if (prediction_container != null){
-        prediction_container.innerHTML = "";
-      }
-      year = year_select.value;
-      sessionStorage.setItem(year_field, year);
-      fetch("/update/" + year).then(function(response){
-        response.json().then(function(data){
-          let optionHTML = '';
-          for(let player of data.players){
-            optionHTML += "<option value=" + player.player_id.toString() + ">" + player.name.toString() + "</option>";
-          }
-          name_select.innerHTML = optionHTML;
-        });
-      });
-    }
-    name_select.onchange = function(){
-      error_container = document.getElementById('error_message');
-      prediction_container = document.getElementById('prediction');
-      if (error_container !== null){
-        error_container.innerHTML = "";
-      }
-      if (prediction_container !== null){
-        prediction_container.innerHTML = "";
-      }
+		if (error_container != null){
+			error_container.innerHTML = "";
+		}
+		if (prediction_container != null){
+			prediction_container.innerHTML = "";
+		}
+	}
+	function update_yearHTML(selected_year, year_field){
+		let year_optionHTML = "<option value=Empty>Empty</option>";
+		for (let i = 1996; i < 2020; i++){
+			if (i.toString() == selected_year){
+				year_optionHTML += "<option value=" + i.toString() + " selected>" + i.toString() + "-" + (i + 1).toString() + "</option>";
+			}
+			else{
+				year_optionHTML += "<option value=" + i.toString() + ">" + i.toString() + "-" + (i + 1).toString() + "</option>";
+			}
+		}
+		year_field.innerHTML = year_optionHTML;
+	}
+	function update_playerHTML(selected_year, selected_player, player_field){
+		if (selected_year == "Empty"){
+			let player_optionHTML = "<option value=Empty>Empty</option>";
+			player_field.innerHTML = player_optionHTML;
+		}
+		else{
+			fetch("/update/" + selected_year).then(function(response){
+				response.json().then(function(data){
+					let player_optionHTML = "<option value=Empty>Empty</option>";
+					for(let player of data.players){
+						if (player.player_id.toString() == selected_player){
+							player_optionHTML += "<option value=" + player.player_id.toString() + " selected>" + player.name.toString() + "</option>";
+						}
+						else{
+							player_optionHTML += "<option value=" + player.player_id.toString() + ">" + player.name.toString() + "</option>";
+						}
+					}
+					player_field.innerHTML = player_optionHTML;
+				});
+			});
+		}
+	}
+	function playerlist_update(year_field_name, player_field_name){
+		let year_field = document.getElementById(year_field_name);
+		let player_field = document.getElementById(player_field_name);
 
-      name = name_select.value;
-      sessionStorage.setItem(name_field, name);
-    }
+		year_field.onchange = function(){
+			delete_containers();
 
-    window.addEventListener("load", function() {
-      if (sessionStorage[year_field]){
-        selected_year = sessionStorage.getItem(year_field);
+			let selected_year = year_field.value;
+			sessionStorage.setItem(year_field_name, selected_year);
+			update_playerHTML(selected_year, "Empty", player_field);
+		}
+		player_field.onchange = function(){
+			delete_containers();
 
-        var i;
-        year_optionHTML = '';
-        for (i = 1996; i < 2020; i++){
-          if (i.toString() == selected_year){
-            year_optionHTML += "<option value=" + i.toString() + " selected>" + i.toString() + "-" + (i+1).toString() + "</option>";
-          }
-          else{
-            year_optionHTML += "<option value=" + i.toString() + ">" + i.toString() + "-" + (i+1).toString() + "</option>";
-          }
-        }
-        year_select.innerHTML = year_optionHTML;
+			let selected_player = player_field.value;
+			sessionStorage.setItem(player_field_name, selected_player);
+		}
+		window.addEventListener("load", function(){
+			if (sessionStorage[year_field_name]){
+				let load_year = sessionStorage.getItem(year_field_name);
+				update_yearHTML(load_year, year_field);
+				if (sessionStorage[player_field]){
+					let load_player = sessionStorage.getItem(player_field_name);
+				}
+				else{
+					let load_player = "Empty";
+				}
+			}
+			update_playerHTML(load_year, load_player, player_field);
+		};
+	}
 
-        fetch("/update/" + selected_year).then(function(response){
-          response.json().then(function(data){
-            let name_optionHTML = '';
-            if (sessionStorage[name_field]){
-              selected_name = sessionStorage.getItem(name_field);
-              for(let player of data.players){
-                if (player.player_id.toString() == selected_name){
-                  name_optionHTML += "<option value=" + player.player_id.toString() + " selected>" + player.name.toString() + "</option>";
-                }
-                else{
-                  name_optionHTML += "<option value=" + player.player_id.toString() + ">" + player.name.toString() + "</option>";
-                }
-              }
-            }
-            else{
-              for(let player of data.players){
-                name_optionHTML += "<option value=" + player.player_id.toString() + ">" + player.name.toString() + "</option>";
-              }
-            }
-            name_select.innerHTML = name_optionHTML;
-          });
-        });
-      }
-    }, false);
-  }
+	for (let i = 0; i < 13; i++){
+		let home_year = "home_players-" + i + "-year";
+		let home_player = "home_players-" + i + "-player_name";
+		let away_year = "away_players-" + i + "-year";
+		let away_player = "away_players-" + i + "-player_name";
 
-  var i;
-  for (i = 0; i < 13; i++){
-    year = "home_players-" + i + "-year"
-    name = "home_players-" + i + "-player_name"
-    playerlist_update(year, name)
-  }
-  for (i = 0; i < 13; i++){
-    year = "away_players-" + i + "-year"
-    name = "away_players-" + i + "-player_name"
-    playerlist_update(year, name)
-  }
+		playerlist_update(home_year, home_player);
+		playerlist_update(away_year, away_player);
+	}
 </script>
 
 {% endblock content %}
