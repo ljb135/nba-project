@@ -131,15 +131,13 @@
 			if (sessionStorage[year_field_name]){
 				let load_year = sessionStorage.getItem(year_field_name);
 				update_yearHTML(load_year, year_field);
-				if (sessionStorage[player_field]){
-					let load_player = sessionStorage.getItem(player_field_name);
+				let load_player = "Empty";
+				if (sessionStorage[player_field_name]){
+					load_player = sessionStorage.getItem(player_field_name);
 				}
-				else{
-					let load_player = "Empty";
-				}
+				update_playerHTML(load_year, load_player, player_field);
 			}
-			update_playerHTML(load_year, load_player, player_field);
-		};
+		});
 	}
 
 	for (let i = 0; i < 13; i++){

@@ -133,21 +133,20 @@ def homepage():
         player.player_name.choices = player_choices
 
     if request.method == "POST":
-        if request.form['Button'] == 'Submit_Button':
-            home_players = form.home_players.data
-            away_players = form.away_players.data
+        home_players = form.home_players.data
+        away_players = form.away_players.data
 
-            if not player_validation(away_players) and not player_validation(home_players):
-                flash("Please enter 9 players on both teams.", "error")
-            elif not player_validation(home_players):
-                flash("Please enter 9 players on the home team.", "error")
-            elif not player_validation(away_players):
-                flash("Please enter 9 players on the away team.", "error")
-            else:
-                stats = np.array([get_stats(home_players, away_players)])
-                prediction = model.predict(stats)
-                message = "The probability that the home team wins is " + str((prediction[0][0] * 100).round(1)) + "%"
-                flash(message, "success")
+        if not player_validation(away_players) and not player_validation(home_players):
+            flash("Please enter 9 players on both teams.", "error")
+        elif not player_validation(home_players):
+            flash("Please enter 9 players on the home team.", "error")
+        elif not player_validation(away_players):
+            flash("Please enter 9 players on the away team.", "error")
+        else:
+            stats = np.array([get_stats(home_players, away_players)])
+            prediction = model.predict(stats)
+            message = "The probability that the home team wins is " + str((prediction[0][0] * 100).round(1)) + "%"
+            flash(message, "success")
 
     return render_template('request.html', form=form, title='Home')
 
@@ -159,7 +158,7 @@ def update(year):
     conn = db.connect()
     result = conn.execute(query)
 
-    player_array = [{"name": "Empty", "player_id": "Empty"}]
+    player_array = []
 
     for player in result:
         playerObj = {}
