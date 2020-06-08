@@ -27,8 +27,17 @@
 
   <div class="form">
 
+    <div class="buttons">
+      <button id="swap_teams_button">Swap Teams</button>
+    </div>
+
     <div class="column">
-      <h3><u><b>Home Team</b></u></h3>
+      <h5><u><b>Home Team</b></u></h5>
+
+      <div class="buttons">
+        <button id="clear_home_team_button">Clear Home Team</button>
+      </div>
+
       <div class = "partialform">
         {% for player in form.home_players %}
         <h3><b>{{ loop.index }}.</b> {{ player.year }} {{ player.player_name }}</h3>
@@ -37,12 +46,18 @@
     </div>
 
     <div class="column">
-      <h3><u><b>Away Team</b></u></h3>
+      <h5><u><b>Away Team</b></u></h5>
+
+      <div class="buttons">
+        <button id="clear_away_team_button">Clear Away Team</button>
+      </div>
+
       <div class = "partialform">
         {% for player in form.away_players %}
         <h3><b>{{ loop.index }}.</b> {{ player.year }} {{ player.player_name }}</h3>
         {% endfor %}
       </div>
+
     </div>
 
     <h2>{{ form.submit }}</h2>
@@ -74,6 +89,20 @@
 		}
 		if (prediction_container != null){
 			prediction_container.innerHTML = "";
+		}
+	}
+	function clear_team(team){
+		for (let i = 0; i < 13; i++){
+			let team_year_field_name = team + "_players-" + i + "-year";
+			let team_player_field_name = team + "_players-" + i + "-player_name";
+
+			let team_year_field = document.getElementById(team_year_field_name);
+			let team_player_field = document.getElementById(team_player_field_name);
+
+			update_yearHTML("Empty", team_year_field);
+			sessionStorage.setItem(team_year_field_name, "Empty");
+			update_playerHTML("Empty", "Empty", team_player_field);
+			sessionStorage.setItem(team_player_field_name, "Empty");
 		}
 	}
 	function update_yearHTML(selected_year, year_field){
@@ -139,7 +168,65 @@
 			}
 		});
 	}
+	function swap_teams_button(){
+		swap_teams_button = document.getElementById("swap_teams_button");
+		swap_teams_button.addEventListener("click", function(event){
+			event.preventDefault();
+			delete_containers();
+			for (let i = 0; i < 13; i++){
+				let home_year_field_name = "home_players-" + i + "-year";
+				let home_player_field_name = "home_players-" + i + "-player_name";
+				let away_year_field_name = "away_players-" + i + "-year";
+				let away_player_field_name = "away_players-" + i + "-player_name";
 
+				let home_year_field = document.getElementById(home_year_field_name);
+				let home_player_field = document.getElementById(home_player_field_name);
+				let away_year_field = document.getElementById(away_year_field_name);
+				let away_player_field = document.getElementById(away_player_field_name);
+
+				let load_away_year = "Empty";
+				let load_away_player = "Empty";
+				let load_home_year = "Empty";
+				let load_home_player = "Empty";
+
+				if (sessionStorage[home_year_field_name]){
+					load_away_year = sessionStorage.getItem(home_year_field_name);
+					if (sessionStorage[home_player_field_name]){
+						load_away_player = sessionStorage.getItem(home_player_field_name);
+					}
+				}
+				if (sessionStorage[away_year_field_name]){
+					load_home_year = sessionStorage.getItem(away_year_field_name);
+					if (sessionStorage[away_player_field_name]){
+						load_home_player = sessionStorage.getItem(away_player_field_name);
+					}
+				}
+
+				update_yearHTML(load_away_year, away_year_field);
+				sessionStorage.setItem(away_year_field_name, load_away_year);
+				update_playerHTML(load_away_year, load_away_player, away_player_field);
+				sessionStorage.setItem(away_player_field_name, load_away_player);
+				update_yearHTML(load_home_year, home_year_field);
+				sessionStorage.setItem(home_year_field_name, load_home_year);
+				update_playerHTML(load_home_year, load_home_player, home_player_field);
+				sessionStorage.setItem(home_player_field_name, load_home_player);
+			}
+		});
+	}
+	function clear_team_button(){
+		clear_home_team_button = document.getElementById("clear_home_team_button");
+		clear_away_team_button = document.getElementById("clear_away_team_button");
+		clear_home_team_button.addEventListener("click", function(event){
+			event.preventDefault();
+			delete_containers();
+			clear_team("home");
+		});
+		clear_away_team_button.addEventListener("click", function(event){
+			event.preventDefault();
+			delete_containers();
+			clear_team("away");
+		});
+	}
 	for (let i = 0; i < 13; i++){
 		let home_year = "home_players-" + i + "-year";
 		let home_player = "home_players-" + i + "-player_name";
@@ -149,6 +236,8 @@
 		playerlist_update(home_year, home_player);
 		playerlist_update(away_year, away_player);
 	}
+	swap_teams_button();
+	clear_team_button();
 </script>
 
 {% endblock content %}
