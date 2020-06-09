@@ -61,7 +61,7 @@
 
     </div>
 
-    <div class="buttons">
+    <div class="buttons" id="submit_button">
       {{ form.submit }}
     </div>
 
@@ -175,8 +175,10 @@
 	function swap_teams_button(){
 		document.addEventListener("DOMContentLoaded", function(){
 			swap_teams_button = document.getElementById("swap_teams_button");
+			submit_button = document.getElementById("submit_button");
 			swap_teams_button.addEventListener("click", function(event){
 				event.preventDefault();
+				submit_button.classList.add("disabled");
 				delete_containers();
 				for (let i = 0; i < 13; i++){
 					let home_year_field_name = "home_players-" + i + "-year";
@@ -216,6 +218,9 @@
 					update_playerHTML(load_home_year, load_home_player, home_player_field);
 					sessionStorage.setItem(home_player_field_name, load_home_player);
 				}
+				window.setTimeout(function(){
+					submit_button.classList.remove("disabled");
+				}, 5000);
 			});
 		});
 	}
