@@ -70,14 +70,12 @@
     background-color: MintCream;
     max-width: 940px;
     width: 85%;
-    height: auto;
-    margin: 0 auto;
     border: 1px black;
     border-style: solid;
     border-width: 6px;
-    margin-top: 100px;
-    margin-bottom: 100px;
     overflow: hidden;
+    margin: 25px auto 25px auto;
+    height: auto;
   }
 
   .container::before {

@@ -26,7 +26,6 @@
   {{ form.hidden_tag() }}
 
   <div class="form">
-
     <div class="buttons">
       <button id="swap_teams_button">Swap Teams</button>
     </div>
@@ -43,7 +42,6 @@
       <div class="buttons">
         <button id="clear_home_team_button">Clear Home Team</button>
       </div>
-
     </div>
 
     <div class="column">
@@ -58,7 +56,6 @@
       <div class="buttons">
         <button id="clear_away_team_button">Clear Away Team</button>
       </div>
-
     </div>
 
     <div class="buttons" id="submit_button">
@@ -179,6 +176,7 @@
 			swap_teams_button.addEventListener("click", function(event){
 				event.preventDefault();
 				submit_button.classList.add("disabled");
+				swap_teams_button.classList.add("disabled");
 				delete_containers();
 				for (let i = 0; i < 13; i++){
 					let home_year_field_name = "home_players-" + i + "-year";
@@ -220,6 +218,7 @@
 				}
 				window.setTimeout(function(){
 					submit_button.classList.remove("disabled");
+					swap_teams_button.classList.remove("disabled");
 				}, 5000);
 			});
 		});
