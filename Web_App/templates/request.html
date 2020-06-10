@@ -26,7 +26,6 @@
   {{ form.hidden_tag() }}
 
   <div class="form">
-
     <div class="buttons">
       <button id="swap_teams_button">Swap Teams</button>
     </div>
@@ -34,23 +33,19 @@
     <div class="column">
       <h5><u><b>Home Team</b></u></h5>
 
-      <div class="buttons">
-        <button id="clear_home_team_button">Clear Home Team</button>
-      </div>
-
       <div class = "partialform">
         {% for player in form.home_players %}
         <h3><b>{{ loop.index }}.</b> {{ player.year }} {{ player.player_name }}</h3>
         {% endfor %}
       </div>
+
+      <div class="buttons">
+        <button id="clear_home_team_button">Clear Home Team</button>
+      </div>
     </div>
 
     <div class="column">
       <h5><u><b>Away Team</b></u></h5>
-
-      <div class="buttons">
-        <button id="clear_away_team_button">Clear Away Team</button>
-      </div>
 
       <div class = "partialform">
         {% for player in form.away_players %}
@@ -58,13 +53,19 @@
         {% endfor %}
       </div>
 
+      <div class="buttons">
+        <button id="clear_away_team_button">Clear Away Team</button>
+      </div>
     </div>
 
-    <h2>{{ form.submit }}</h2>
+    <div class="buttons" id="submit_button">
+      {{ form.submit }}
+    </div>
 
     {% if form.errors %}
       {{form.errors}}
     {% endif %}
+
   </div>
 
 </form>
@@ -169,62 +170,73 @@
 		});
 	}
 	function swap_teams_button(){
-		swap_teams_button = document.getElementById("swap_teams_button");
-		swap_teams_button.addEventListener("click", function(event){
-			event.preventDefault();
-			delete_containers();
-			for (let i = 0; i < 13; i++){
-				let home_year_field_name = "home_players-" + i + "-year";
-				let home_player_field_name = "home_players-" + i + "-player_name";
-				let away_year_field_name = "away_players-" + i + "-year";
-				let away_player_field_name = "away_players-" + i + "-player_name";
+		document.addEventListener("DOMContentLoaded", function(){
+			swap_teams_button = document.getElementById("swap_teams_button");
+			submit_button = document.getElementById("submit_button");
+			swap_teams_button.addEventListener("click", function(event){
+				event.preventDefault();
+				submit_button.classList.add("disabled");
+				swap_teams_button.classList.add("disabled");
+				delete_containers();
+				for (let i = 0; i < 13; i++){
+					let home_year_field_name = "home_players-" + i + "-year";
+					let home_player_field_name = "home_players-" + i + "-player_name";
+					let away_year_field_name = "away_players-" + i + "-year";
+					let away_player_field_name = "away_players-" + i + "-player_name";
 
-				let home_year_field = document.getElementById(home_year_field_name);
-				let home_player_field = document.getElementById(home_player_field_name);
-				let away_year_field = document.getElementById(away_year_field_name);
-				let away_player_field = document.getElementById(away_player_field_name);
+					let home_year_field = document.getElementById(home_year_field_name);
+					let home_player_field = document.getElementById(home_player_field_name);
+					let away_year_field = document.getElementById(away_year_field_name);
+					let away_player_field = document.getElementById(away_player_field_name);
 
-				let load_away_year = "Empty";
-				let load_away_player = "Empty";
-				let load_home_year = "Empty";
-				let load_home_player = "Empty";
+					let load_away_year = "Empty";
+					let load_away_player = "Empty";
+					let load_home_year = "Empty";
+					let load_home_player = "Empty";
 
-				if (sessionStorage[home_year_field_name]){
-					load_away_year = sessionStorage.getItem(home_year_field_name);
-					if (sessionStorage[home_player_field_name]){
-						load_away_player = sessionStorage.getItem(home_player_field_name);
+					if (sessionStorage[home_year_field_name]){
+						load_away_year = sessionStorage.getItem(home_year_field_name);
+						if (sessionStorage[home_player_field_name]){
+							load_away_player = sessionStorage.getItem(home_player_field_name);
+						}
 					}
-				}
-				if (sessionStorage[away_year_field_name]){
-					load_home_year = sessionStorage.getItem(away_year_field_name);
-					if (sessionStorage[away_player_field_name]){
-						load_home_player = sessionStorage.getItem(away_player_field_name);
+					if (sessionStorage[away_year_field_name]){
+						load_home_year = sessionStorage.getItem(away_year_field_name);
+						if (sessionStorage[away_player_field_name]){
+							load_home_player = sessionStorage.getItem(away_player_field_name);
+						}
 					}
-				}
 
-				update_yearHTML(load_away_year, away_year_field);
-				sessionStorage.setItem(away_year_field_name, load_away_year);
-				update_playerHTML(load_away_year, load_away_player, away_player_field);
-				sessionStorage.setItem(away_player_field_name, load_away_player);
-				update_yearHTML(load_home_year, home_year_field);
-				sessionStorage.setItem(home_year_field_name, load_home_year);
-				update_playerHTML(load_home_year, load_home_player, home_player_field);
-				sessionStorage.setItem(home_player_field_name, load_home_player);
-			}
+					update_yearHTML(load_away_year, away_year_field);
+					sessionStorage.setItem(away_year_field_name, load_away_year);
+					update_playerHTML(load_away_year, load_away_player, away_player_field);
+					sessionStorage.setItem(away_player_field_name, load_away_player);
+					update_yearHTML(load_home_year, home_year_field);
+					sessionStorage.setItem(home_year_field_name, load_home_year);
+					update_playerHTML(load_home_year, load_home_player, home_player_field);
+					sessionStorage.setItem(home_player_field_name, load_home_player);
+				}
+				window.setTimeout(function(){
+					submit_button.classList.remove("disabled");
+					swap_teams_button.classList.remove("disabled");
+				}, 5000);
+			});
 		});
 	}
 	function clear_team_button(){
-		clear_home_team_button = document.getElementById("clear_home_team_button");
-		clear_away_team_button = document.getElementById("clear_away_team_button");
-		clear_home_team_button.addEventListener("click", function(event){
-			event.preventDefault();
-			delete_containers();
-			clear_team("home");
-		});
-		clear_away_team_button.addEventListener("click", function(event){
-			event.preventDefault();
-			delete_containers();
-			clear_team("away");
+		document.addEventListener("DOMContentLoaded", function(){
+			clear_home_team_button = document.getElementById("clear_home_team_button");
+			clear_away_team_button = document.getElementById("clear_away_team_button");
+			clear_home_team_button.addEventListener("click", function(event){
+				event.preventDefault();
+				delete_containers();
+				clear_team("home");
+			});
+			clear_away_team_button.addEventListener("click", function(event){
+				event.preventDefault();
+				delete_containers();
+				clear_team("away");
+			});
 		});
 	}
 	for (let i = 0; i < 13; i++){
