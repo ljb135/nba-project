@@ -1,14 +1,11 @@
 from flask import Flask, url_for, render_template, redirect, jsonify, request, flash
 from forms import PlayerForm, PlayerSelectionForm
 import numpy as np
-import os
 from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData, select, and_
 from tensorflow import keras
-import csv
 
 # WebApp configuration and file paths
-template_dir = os.path.abspath('templates')
-app = Flask(__name__, template_folder=template_dir)
+app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ao19s2en1638nsh6msh172kd0s72ksj2'
 model = keras.models.load_model('NBA_Game_model.h5')
 db = create_engine('sqlite:///NBAPlayers.db', echo=True)
@@ -170,4 +167,4 @@ def update(year):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=50000, debug=True)
+    app.run(host='127.0.0.1', port=8080, debug=True)
